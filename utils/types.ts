@@ -1,0 +1,289 @@
+// import { Href } from "expo-router";
+// import { Firestore, Timestamp } from "firebase/firestore";
+// import { Icon } from "phosphor-react-native";
+
+import { Timestamp } from "firebase/firestore";
+import React, { ReactNode } from "react";
+import {
+    // ActivityIndicator,
+    // ActivityIndicatorProps,
+    // ImageStyle,
+    // Pressable,
+    // PressableProps,
+    TextInput,
+    TextInputProps,
+    TextProps,
+    TextStyle,
+    TouchableOpacityProps,
+    ViewStyle
+} from "react-native";
+
+export type ThemeString = "light" | "dark"
+
+export type ThemeContextType = {
+    currentTheme: ThemeString;
+    isSystemTheme: boolean;
+    toggleTheme: (newTheme: ThemeString) => void;
+    useSystemTheme: () => void;
+}
+
+export type ScreenWrapperProps = {
+    style?: ViewStyle;
+    children: React.ReactNode;
+};
+
+export type modalWrapperProps = {
+    style?: ViewStyle;
+    children: React.ReactNode;
+    bgColor?: string
+}
+
+export type AppActionType = {
+    accessTo: string;
+    maxWishItemImages: number;
+    oneTimeFee: number;
+    shouldPayOneTimeFee: boolean;
+    wishitemCreationLimit: number;
+    wishlistCreationLimit: number;
+    maxGoalAmountDigits: number;
+    maxGoalAmount: number;
+    minGoalAmount: number;
+    shouldDisplayConfetti: boolean;
+    feeDiscountInPercentage: number;
+}
+
+export type AppTransactionType = {
+    id?: string;
+    email: string;
+    charges?: number;
+    amount: number;
+    currency: string;
+    paidAmount?: number;
+    status?: string;
+    uid?: string;
+    refId?: string;
+    paidAt?: Date,
+}
+
+export type AppContextType = {
+    actions: AppActionType | null,
+}
+
+export type AccountOptionType = {
+    title: string;
+    text?: string;
+    icon: React.ReactNode;
+    bgColor: string;
+    routeName?: any;
+}
+
+export type TypographyProps = {
+    size?: number;
+    color?: string;
+    fontFamily?: string;
+    fontWeight?: TextStyle["fontWeight"];
+    children: any | null;
+    style?: TextStyle;
+    textProps?: TextProps;
+}
+
+export type IconComponent = React.ComponentType<{
+    height?: number;
+    width?: number;
+    strokeWidth?: number;
+    color?: string;
+    fill?: string;
+}>;
+
+export type IconProps = {
+    name: string;
+    color?: string;
+    size?: number;
+    strokeWidth?: number;
+    fill?: string;
+}
+
+export type BackButtonProps = {
+    style?: ViewStyle;
+    iconSize?: number;
+    iconType?: string;
+    customAction?: () => void;
+}
+
+export type HeaderProps = {
+    title?: string;
+    style?: ViewStyle;
+    leftElement?: ReactNode;
+}
+
+export interface InputProps extends TextInputProps {
+    icon?: React.ReactNode;
+    containerStyle?: ViewStyle;
+    inputStyle?: TextStyle;
+    inputRef?: React.RefObject<TextInput>
+    isPassword?: boolean;
+}
+
+export interface CustomButtonProps extends TouchableOpacityProps {
+    style?: ViewStyle;
+    onPress?: () => void;
+    loading?: boolean;
+    hasShowdow?: boolean;
+    children: React.ReactNode;
+}
+
+export type ImageUploadProps = {
+    files?: any; // for multiple
+    file?: any; // for single
+    onSelect: (file: any[] | any) => void; // for single and multiple
+    onClear: (i?: number) => void;
+    containerStyle?: ViewStyle;
+    imageStyle?: ViewStyle;
+    placeholder?: string;
+}
+
+export type UserType = {
+    uid?: string;
+    email: string | null;
+    name: string | null;
+    image?: any,
+    ///////////////////////
+    ///////////////////////
+    inviteCode?: string;
+    referredBy?: string | null;
+    isSubscribed?: boolean;
+    isActive?: boolean;
+    createdAt?: boolean;
+} | null;
+
+export type UserDataType = {
+    name?: string;
+    image?: any;
+    email?: string;
+    isSubscribed?: boolean;
+}
+
+export type AuthContextType = {
+    user: UserType;
+    setUser: Function;
+    login: (
+        email: string,
+        password: string,
+    ) => Promise<{ success: boolean; msg?: string }>;
+    register: (
+        name: string,
+        email: string,
+        password: string,
+        refferedBy?: string,
+    ) => Promise<{ success: boolean; msg?: string }>;
+    updateUserData: (userId: string) => Promise<void>
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    getStoredUserData: () => Promise<{ email: string; name: string }>
+    enableBiometric: () => Promise<boolean>;
+    disableBiometric: () => Promise<void>;
+    authenticateWithBiometric: () => Promise<{ success: boolean; msg?: string }>;
+    biometricEnabled: boolean; // biometric is enabled
+}
+
+export type TransactionListType = {
+    data: TransactionType[];
+    title?: string;
+    loading?: boolean;
+    emptyListMessage?: string;
+};
+
+export type TransactionItemProps = {
+    item: TransactionType;
+    index: number;
+    handleClick: Function;
+};
+
+
+export type ResponseType = {
+    success: boolean;
+    data?: any;
+    msg?: string;
+}
+
+export type WalletType = {
+    id?: string;
+    uid?: string;
+    allTimeBalance: number;
+    remainingBalance: number;
+    referralEarnings: number;
+    contributedEarning: number;
+    created?: Date;
+}
+
+export type ThemeButtonProps = {
+    title: string;
+    icon: React.ReactNode;
+    onPress: () => void;
+    isActive: boolean;
+}
+
+export type WishInsightType = {
+    title: string;
+    icon: React.ReactNode;
+    value: string;
+    iconbgColor?: string;
+}
+
+export type TransactionType = {
+    id?: string;
+    name: string;
+    type: string;
+    amount: number;
+    date: Date | Timestamp | string;
+    description?: string;
+    image?: any;
+    uid?: string;
+};
+
+
+export type ContributorType = {
+    id?: string;
+    name: string;
+    type: string;
+    amount: number;
+    date: Date | Timestamp | string;
+    description?: string;
+    image?: any;
+    uid?: string;
+}
+
+export type WishItemType = {
+    wishlistId?: string;
+    id?: string;
+    slug?: string;
+    title: string;
+    uid?: string;
+    images: any[];
+    image?: string;
+    description?: string;
+    contributorCount?: number;
+    goalAmount?: number;
+    amountRecieved?: number;
+    created?: Date;
+    active?: boolean;
+    isCompleted?: boolean;
+}
+
+export type WishlistType = {
+    id?: string;
+    title: string;
+    description?: string;
+    image: any;
+    slug?: string;
+    totalWishItems?: number;
+    totalContributors?: number;
+    totalGoalAmount?: number;
+    totalAmountRecieved?: number;
+    uid?: string;
+    created?: Date;
+    active?: boolean;
+    isCompleted?: boolean;
+    wishes?: WishItemType[];
+    link?: string;
+}

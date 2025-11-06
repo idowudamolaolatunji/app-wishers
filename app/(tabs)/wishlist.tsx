@@ -1,0 +1,301 @@
+import Button from "@/components/Button";
+import Loading from "@/components/Loading";
+import Rangebar from "@/components/Rangebar";
+import ScreenHeader from "@/components/ScreenHeader";
+import ScreenWrapper from "@/components/ScreenWrapper";
+import Subscribe from "@/components/Subscribe";
+import Typography from "@/components/Typography";
+import WishInsight from "@/components/WishInsight";
+import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
+import { useAppContext } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
+import useFetchData from "@/hooks/useFetchData";
+import { useTheme } from "@/hooks/useTheme";
+import { getFilePath } from "@/services/imageService";
+import { calculatePercentage, formatCurrency, formatShortCurrency } from "@/utils/helpers";
+import { verticalScale } from "@/utils/styling";
+import { WishlistType } from "@/utils/types";
+import { FlashList } from "@shopify/flash-list";
+import * as Burnt from 'burnt';
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { orderBy, where } from "firebase/firestore";
+import * as Icons from "phosphor-react-native";
+import React, { useState } from "react";
+import { Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import ModalView from "react-native-modal";
+import Animated, { FadeInDown } from "react-native-reanimated";
+
+const isIOS = Platform.OS === "ios";
+
+export default function WishlistScreen() {
+	const router = useRouter();
+    const { user } = useAuth();
+	const { Colors, currentTheme } = useTheme();
+    const { actions } = useAppContext();
+    const [showSubModal, setShowSubModal] = useState(false);
+
+    const constraints = user?.uid 
+        ? [where("uid", "==", user.uid), orderBy("created", "desc")]
+        : [orderBy("created", "desc")]
+    ;
+    const { data, error, loading } = useFetchData<WishlistType>("wishlists", constraints);
+    const completed = data?.filter(list => list && list?.isCompleted);
+
+    const handleOpenWishlistDetail = function(item: WishlistType) {
+        router.push({
+            pathname: "/(modals)/wishlistDetailModal",
+            params: {
+                id: item?.id,
+                slug: item?.slug,
+            }
+        });
+    }
+
+    const handleAddWishlist = function() {
+        if(actions?.shouldPayOneTimeFee && !user?.isSubscribed) {
+            setShowSubModal(true);
+        } else {
+            if(data?.length >= actions?.wishlistCreationLimit!) {
+                Burnt.toast({ haptic: "error", title: `You cannot create more than ${actions?.wishlistCreationLimit} wishlists` })
+            } else {
+                router.push("/(modals)/createEditWishlistModal")
+            }
+        }
+    }
+
+	return (
+        <ScreenWrapper>
+            <View style={styles.container}>
+                <ScreenHeader title="My Wishlists" style={{ marginVertical: spacingY._10 }} />
+
+                <View style={styles.insights}>
+                    <WishInsight
+                        title="Total Wishlists"
+                        value={`${data?.length}`}
+                        // icon={<Icons.ScrollIcon size={24}  weight="bold" color={BaseColors.white} />}
+                        icon={<Icons.ScrollIcon size={24}  weight="bold" color="#1e40af" />}
+                        iconbgColor="#dbeafe"
+                    />
+                    <WishInsight
+                        title="Completed"
+                        value={`${completed?.length}`}
+                        // icon={<Icons.ListChecksIcon size={23} weight="bold" color={BaseColors.white} />}
+                        icon={<Icons.ListChecksIcon size={23} weight="bold" color="#9f1239" />}
+                        iconbgColor="#fce7f3"
+                    />
+                </View>
+
+                <ScrollView
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {loading && (
+                        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                            <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
+                        </View>
+                    )}
+
+                    {(!loading && error) && (
+                        <View
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: spacingY._5,
+                                marginTop: spacingY._60
+                            }}
+                        >
+                            <Image
+                                source={require("@/assets/images/icon-sad-face.png")}
+                                style={{ width: verticalScale(110), height: verticalScale(110), }}
+                                contentFit="cover"
+                            />
+                            <Typography
+                                size={isIOS ? 16 : 18}
+                                color={Colors.textLighter}
+                                style={{ textAlign: "center", marginTop: spacingY._15 }}
+                            >
+                                Oops! Error loading...
+                            </Typography>
+                        </View>
+                    )}
+
+                    {(!loading && data.length > 0) && (
+                        <FlashList
+                            data={data}
+                            renderItem={({ item, index }: { item: WishlistType; index: number; }) => (
+                                <WishListComponent
+                                    key={index}
+                                    item={item}
+                                    index={index}
+                                    handleOpenDetails={() => {
+                                        return handleOpenWishlistDetail(item)
+                                    }}
+                                />
+                            )}
+                        />
+                    )}
+
+                    {(!loading && data.length < 1) && (
+                        <View
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: spacingY._5,
+                                marginTop: spacingY._60
+                            }}
+                        >
+                            <Image
+                                source={require("@/assets/images/icon-list-empty.png")}
+                                style={{ width: verticalScale(110), height: verticalScale(110), }}
+                                contentFit="cover"
+                            />
+                            <Typography
+                                size={isIOS ? 15 : 17}
+                                color={Colors.textLighter}
+                                style={{ textAlign: "center", marginTop: spacingY._15 }}
+                            >
+                                No wishlist yet! Click the floating + icon to create one
+                            </Typography>
+                        </View>
+                    )}
+                </ScrollView>
+                
+                <Button style={styles.floatingButton} onPress={handleAddWishlist}>
+                    <Icons.PlusIcon
+                        color={BaseColors.white}
+                        weight="bold"
+                        size={verticalScale(24)}
+                    />
+                </Button>
+            </View>
+
+            {/* ONE-TIME PAYMENT MODAL */}
+            <ModalView
+                isVisible={showSubModal}
+                backdropOpacity={0.7}
+                backdropTransitionInTiming={800}
+                backdropTransitionOutTiming={500}
+            >
+                <Subscribe handleClose={() => setShowSubModal(false)} />
+                
+                <Pressable
+                    onPress={() => setShowSubModal(false)}
+                    style={{
+                        width: verticalScale(50),
+                        height: verticalScale(50),
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: BaseColors.neutral800,
+                        borderRadius: 70,
+                        alignSelf: "center",
+                        marginTop: spacingY._10
+                    }}
+                >
+                    <Icons.XIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                </Pressable>
+            </ModalView>
+        </ScreenWrapper>
+	);
+}
+
+
+function WishListComponent({ item, index, handleOpenDetails }: { 
+    item: WishlistType, index: number, handleOpenDetails: () => void;
+}) {
+	const { Colors } = useTheme();
+    const percentage = calculatePercentage(item?.totalAmountRecieved ?? 0, item?.totalGoalAmount ?? 0)
+
+
+    return (
+        <Animated.View entering={FadeInDown.delay(index * 70)}>
+            <TouchableOpacity
+                activeOpacity={0.8}
+                style={[styles.card, { backgroundColor: Colors.background200 }]}
+                onPress={handleOpenDetails}
+            >
+                <Image
+                    source={getFilePath(item?.image)}
+                    contentFit="cover"
+                    style={[styles.cardImage, { backgroundColor: Colors.background300 }]}
+                />
+
+                <View style={styles.cardDetails}>
+                    <Typography
+                        size={isIOS ? 20 : 23}
+                        fontFamily="urbanist-bold"
+                    >
+                        {item?.title}
+                    </Typography>
+
+                    {item.description && (
+                        <Typography textProps={{ numberOfLines: 1 }} color={Colors.textLighter}>{item.description}</Typography>
+                    )}
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <View style={{ flexDirection: "row", gap: 3 }}>
+                            <Icons.UsersThreeIcon size={22} color={Colors.textLighter} />
+                            <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 20)} color={Colors.textLighter}>{item.totalContributors} Contributor{item?.totalContributors === 1 ? "" : "s"}</Typography>
+                        </View>
+                        <View style={{ flexDirection: "row", gap: 3 }}>
+                            <Icons.GiftIcon size={22} color={Colors.textLighter} />
+                            <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 20)} color={Colors.textLighter}>{item.totalWishItems} Wish{item?.totalWishItems === 1 ? "" : "es"}</Typography>
+                        </View>
+                    </View>
+
+                    <Rangebar value={percentage} />
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 17 : 20)} color={Colors.textLighter}>{percentage}% Raised</Typography>
+                        <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 18 : 20.5)} color={BaseColors.primaryLight}>{item?.totalAmountRecieved ? `${formatShortCurrency(item?.totalAmountRecieved ?? 0)} / ${formatShortCurrency(item?.totalGoalAmount ?? 0)}` : formatCurrency(0)}</Typography>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        </Animated.View>
+    );
+}
+
+
+const styles = StyleSheet.create({
+	container: {
+		position: "relative",
+		flex: 1,
+	},
+    insights: {
+        paddingHorizontal: spacingX._18,
+        paddingTop: spacingY._15,
+        paddingBottom: spacingY._5,
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    listContainer: {
+        padding: spacingY._20,
+        paddingBottom: spacingY._60
+    },
+    card: {
+        borderRadius: radius._10,
+        // padding: spacingY._10,
+        padding: spacingY._7,
+        gap: spacingY._20,
+        marginBottom: spacingY._15,
+    },
+    cardImage: {
+        width: "100%",
+        height: verticalScale(170),
+        borderRadius: radius._10,
+    },
+    cardDetails: {
+        gap: spacingY._10,
+        // added
+        padding: spacingY._7,
+        paddingTop: spacingY._3,
+    },
+	floatingButton: {
+		height: verticalScale(50),
+		width: verticalScale(50),
+		borderRadius: 100,
+		position: "absolute",
+		bottom: verticalScale(30),
+		right: verticalScale(15),
+	},
+})
