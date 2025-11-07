@@ -31,20 +31,25 @@ export default function MultipleImageUpload({
             return Burnt.toast({ haptic: "error", title: "Max images upload exceeded" })
         }
 
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            // allowsEditing: true,
-            allowsMultipleSelection: true,
-            aspect: [4, 3],
-            quality: 1,
-            selectionLimit: actions?.maxWishItemImages,
-        });
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsMultipleSelection: true,
+                aspect: [4, 3],
+                quality: 1,
+                selectionLimit: actions?.maxWishItemImages,
+            });
 
-        if(!result.canceled) {
-            // we only want the amount we allowed
-            const allowed = result.assets?.slice(0, allowedRemains);
-            onSelect(result.assets?.slice(0, allowedRemains))
-            setAllowedRemains(allowedRemains - allowed.length)
+            if(!result.canceled) {
+                // we only want the amount we allowed
+                const allowed = result.assets?.slice(0, allowedRemains);
+                onSelect(result.assets?.slice(0, allowedRemains))
+                setAllowedRemains(allowedRemains - allowed.length)
+            }
+
+        } catch(err: any) {
+            console.log("Error: ", err?.message);
+            Burnt.toast({ haptic: "error", title: "Image not supported, select a suppported image!" })
         }
     }
 

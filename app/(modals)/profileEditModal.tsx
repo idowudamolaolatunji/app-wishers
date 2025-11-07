@@ -1,3 +1,4 @@
+import Asterisk from '@/components/Asterisk';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import FormInput from '@/components/FormInput';
@@ -17,7 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import * as Icons from "phosphor-react-native";
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 
 export default function ProfileEditModal() {
@@ -97,16 +98,17 @@ export default function ProfileEditModal() {
                         { shadowColor: Colors.inverseText, backgroundColor: Colors.background300 }]}
                         onPress={handlePickImage}
                     >
-                        <Icons.PencilIcon 
+                        <Icons.CameraIcon
+                            weight="fill"
                             size={verticalScale(20)}
-                            color={Colors.text}
+                            color={Colors.textLighter}
                         />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.formItems}>
                     <View style={styles.inputContainer}>
-                        <Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Fullname</Typography>
+                        <Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Fullname <Asterisk /></Typography>
                         <FormInput
                             placeholder='Fullname'
                             value={userData.name}
@@ -119,7 +121,7 @@ export default function ProfileEditModal() {
 
         <View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
             <Button onPress={handleSubmit} disabled={shouldDisable} style={{ flex: 1 }} loading={loading}>
-                <Typography size={20} fontFamily="urbanist-extrabold" color={Colors.inverseText}>Update</Typography>
+                <Typography size={Platform.OS == "ios" ? 22 : 25} fontFamily="urbanist-semibold" color={Colors.inverseText}>Update</Typography>
             </Button>
         </View>
     </ModalWrapper>

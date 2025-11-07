@@ -22,7 +22,7 @@ import { useRouter } from "expo-router";
 import { orderBy, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
-import { Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, Pressable, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import ModalView from "react-native-modal";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
@@ -34,13 +34,20 @@ export default function WishlistScreen() {
 	const { Colors, currentTheme } = useTheme();
     const { actions } = useAppContext();
     const [showSubModal, setShowSubModal] = useState(false);
+	const [refreshing, setRefreshing] = useState(false);
 
     const constraints = user?.uid 
         ? [where("uid", "==", user.uid), orderBy("created", "desc")]
         : [orderBy("created", "desc")]
     ;
-    const { data, error, loading } = useFetchData<WishlistType>("wishlists", constraints);
+    const { data, error, loading, refetch } = useFetchData<WishlistType>("wishlists", constraints);
     const completed = data?.filter(list => list && list?.isCompleted);
+
+    const handleRefresh = function() {
+		setRefreshing(true);
+		refetch();
+    	setRefreshing(false);
+	}
 
     const handleOpenWishlistDetail = function(item: WishlistType) {
         router.push({
@@ -87,6 +94,12 @@ export default function WishlistScreen() {
                 </View>
 
                 <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={handleRefresh}
+                        />
+                    }
                     contentContainerStyle={styles.listContainer}
                     showsVerticalScrollIndicator={false}
                 >

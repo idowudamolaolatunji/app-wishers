@@ -7,6 +7,7 @@ import { TransactionItemProps, TransactionListType } from '@/utils/types'
 import { FlashList } from "@shopify/flash-list"
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
+import { Timestamp } from 'firebase/firestore'
 import React from 'react'
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
@@ -64,6 +65,11 @@ export default function TransactionList({ data, title, loading, emptyListMessage
 function TransactionItem({ item, index, handleClick }: TransactionItemProps) {
     const { Colors } = useTheme();
 
+    const date = (item?.date as Timestamp)?.toDate()?.toLocaleDateString("en-Gb", {
+        day: "numeric",
+        month: "short",
+    })
+
     return (
         <Animated.View entering={FadeInDown.delay(index * 70)}>
             <TouchableOpacity
@@ -96,13 +102,13 @@ function TransactionItem({ item, index, handleClick }: TransactionItemProps) {
                         textProps={{ numberOfLines: 2 }}
                         fontFamily="urbanist-medium"
                     >
-                        {item.description || "Paid on tuesday"}
+                        {item.description || "--"}
                     </Typography>
                 </View>
 
                 <View style={styles.amountDetails}>
                     <Typography size={isIOS ? 17 : 20} fontFamily="urbanist-bold" color={BaseColors.primaryLight}>{formatCurrency(item.amount)}</Typography>
-                    <Typography size={isIOS ? 12 : 15} fontFamily="urbanist-medium" color={Colors.textLighter}>Jan 12</Typography>
+                    <Typography size={isIOS ? 12 : 15} fontFamily="urbanist-medium" color={Colors.textLighter}>{date}</Typography>
                 </View>
             </TouchableOpacity>
         </Animated.View>

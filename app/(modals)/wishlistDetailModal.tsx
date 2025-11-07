@@ -26,7 +26,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { limit, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, Share, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, RefreshControl, ScrollView, Share, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown, useSharedValue } from "react-native-reanimated";
 
 const isIOS = Platform.OS === "ios";
@@ -38,8 +38,9 @@ export default function wishlistDetailModal() {
     const { actions } = useAppContext();
     const { Colors, currentTheme } = useTheme();
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [loading, setLoading] = useState({ delete: false, share: false });
     const [showConfetti, setShowConfetti] = useState(false);
+	const [refreshing, setRefreshing] = useState(false);
 
     const isOpen = useSharedValue(false);
     const toggleSheet = function() {
@@ -48,21 +49,30 @@ export default function wishlistDetailModal() {
     };
 
     const slug = params?.slug;
-    const { data, error, loading } = useFetchData<WishlistType>(
+    const { data, error, loading: mainLoading, refetch: refetchWishlist } = useFetchData<WishlistType>(
         "wishlists", 
         (user?.uid && slug) ? [where("uid", "==", user.uid), where("slug", "==", slug), limit(1)] : [],
     );
     const wishlist = data[0] as WishlistType;
     const percentage = calculatePercentage(wishlist?.totalAmountRecieved ?? 0, wishlist?.totalGoalAmount ?? 0);
 
+    const handleRefresh = function() {
+		setRefreshing(true);
+		refetchWishlist();
+    	setRefreshing(false);
+	}
+
     // THIS IS WHERE WE SHARE THE WISH ITEMS
     const handleShare = async function() {
+        setLoading({ ...loading, share: true });
         try {
             await Share.share({
                 message: `Check out my Wishlist: ${wishlist?.title} \n\n${wishlist.link}`,
                 url: `${wishlist.link}`, // iOS only
                 title: 'Share Wishlist', // Android only
             });
+            
+            setLoading({ ...loading, share: false });
         } catch (error) {
             return error;
         }
@@ -109,7 +119,7 @@ export default function wishlistDetailModal() {
     // HANDLE DELETE A WISHLIST, AND EFFECTIVELY GOING BACK TO THE WISHLISTS LIST PAGE
     const handleDelete = async function() {
         if(!wishlist?.id) return;
-        setDeleteLoading(true);
+        setLoading({ ...loading, delete: true });
 
         try {
             router.dismissTo({ pathname: "/(tabs)/wishlist" });
@@ -120,7 +130,7 @@ export default function wishlistDetailModal() {
         } catch(err: any) {
             Burnt.toast({ haptic: "error", title: err?.message });
         } finally {
-            setDeleteLoading(false);
+            setLoading({ ...loading, delete: false });
         }
     }
 
@@ -137,6 +147,12 @@ export default function wishlistDetailModal() {
             {showConfetti && <ConfettiEL />}
 
             <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                    />
+                }
                 bounces={false}
                 overScrollMode="never" // default, always, never
                 nestedScrollEnabled={false}
@@ -196,13 +212,13 @@ export default function wishlistDetailModal() {
                     </React.Fragment>
                 )}
 
-                {loading && (
+                {mainLoading && (
                     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                         <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
                     </View>
                 )}
 
-                {(!loading && error) && (
+                {(!mainLoading && error) && (
                     <View
                         style={{
                             alignItems: "center",
@@ -226,7 +242,7 @@ export default function wishlistDetailModal() {
                     </View>
                 )}
 
-                {(!loading && wishlist.title) && (
+                {(!mainLoading && wishlist.title) && (
                     <React.Fragment>
                         <ImageBackground
                             source={wishlist?.image}
@@ -271,12 +287,18 @@ export default function wishlistDetailModal() {
                             </View>
 
                             {(wishlist?.totalWishItems && wishlist?.totalWishItems > 0) ? (
-                                <Button onPress={handleShare} style={{ flexDirection: "row", alignItems: "center", gap: spacingY._5, backgroundColor: BaseColors.accentDarker }}>
-                                    <Typography size={isIOS ? 20 : 22} color={BaseColors.neutral800} fontFamily="urbanist-semibold">
-                                        Share Link
-                                    </Typography>
-
-                                    <Icons.ShareFatIcon color={BaseColors.neutral800} weight="bold" size={verticalScale(24)} />
+                                <Button onPress={handleShare} disabled={loading.share} style={{ flexDirection: "row", alignItems: "center", gap: spacingY._5, backgroundColor: BaseColors.accentDarker }}>
+                                    {loading.share ? (
+                                        <Loading color={BaseColors.neutral700} />
+                                    ) : (
+                                        <React.Fragment>
+                                            <Typography size={isIOS ? 20 : 22} color={BaseColors.neutral800} fontFamily="urbanist-semibold">
+                                                Share Link
+                                            </Typography>
+        
+                                            <Icons.ShareFatIcon color={BaseColors.neutral800} weight="bold" size={verticalScale(24)} />
+                                        </React.Fragment>
+                                    )}
                                 </Button>
                             ) : (
                                 null
@@ -346,7 +368,7 @@ export default function wishlistDetailModal() {
                 <DeleteItem
                     text="Are you sure you want to delete wishlist? note that everything that relates with this wishlist will be deleted including the wishitems and the transtion"
                     handleClose={toggleSheet}
-                    loading={deleteLoading}
+                    loading={loading.delete}
                     handleDelete={handleDelete}
                 />
             </BottomSheet>

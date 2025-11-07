@@ -21,11 +21,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { limit, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
-import { Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import ImageView from "react-native-image-viewing";
 
 
 const isIOS = Platform.OS === "ios";
+
 export default function wishItemDetailModal() {
     const router = useRouter();
     const { user } = useAuth();
@@ -42,13 +43,20 @@ export default function wishItemDetailModal() {
     const [visible, setVisible] = useState(false);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
     const [showConfetti, setShowConfetti] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
-    const { data, error, loading } = useFetchData<WishItemType>(
+    const { data, error, loading: mainLoading, refetch: refetchWish } = useFetchData<WishItemType>(
         "wishitems", 
         (user?.uid && params?.slug) ? [where("uid", "==", user.uid), where("slug", "==", params?.slug), limit(1)] : [],
     );
     const item = data[0] as WishItemType;
-    const percentage = calculatePercentage(item?.amountRecieved ?? 0, item?.goalAmount ?? 0)
+    const percentage = calculatePercentage(item?.amountRecieved ?? 0, item?.goalAmount ?? 0);
+
+    const handleRefresh = function() {
+		setRefreshing(true);
+		refetchWish();
+    	setRefreshing(false);
+	}
     
     // GETTTING THE IMAGE URI PART HERE FOR THE ZOOMED DISPLAY
     const images = item?.images?.map((image: any) => ({
@@ -89,18 +97,24 @@ export default function wishItemDetailModal() {
 				<ScreenHeader title={item?.title} leftElement={<BackButton />} style={{ marginBottom: spacingY._5 }} />
 
 				<ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={handleRefresh}
+                        />
+                    }
                     bounces={false}
                     overScrollMode="never" // default, always, never
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingTop: spacingY._20 }}
                 >
-                    {loading && (
+                    {mainLoading && (
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                             <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
                         </View>
                     )}
 
-                    {(!loading && error) && (
+                    {(!mainLoading && error) && (
                         <View
                             style={{
                                 alignItems: "center",
@@ -124,7 +138,7 @@ export default function wishItemDetailModal() {
                         </View>
                     )}
 
-                    {(!loading && data) && (
+                    {(!mainLoading && data) && (
                         <React.Fragment>
                             <View style={styles.displayDetails}>
                                 {item?.images?.length > 0 && (

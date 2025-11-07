@@ -1,8 +1,10 @@
+import Asterisk from "@/components/Asterisk";
 import BackButton from "@/components/BackButton";
 import ModalWrapper from "@/components/ModalWrapper";
 import { BaseColors, spacingX, spacingY } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { scale, verticalScale } from "@/utils/styling";
+import * as Burnt from "burnt";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
@@ -11,11 +13,23 @@ import FormInput from "../../components/FormInput";
 import ScreenHeader from "../../components/ScreenHeader";
 import Typography from "../../components/Typography";
 
-
-export default function PasswordChange({ }) {
+export default function PasswordChange() {
     const { Colors, currentTheme } = useTheme();
     const [passwordData, setPasswordData] = useState({ password: "", newPassword: "" });
     const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async function() {
+        const { password, newPassword } = passwordData;
+        if(!password || !newPassword) {
+            return Burnt.toast({ haptic: "error", title: "Fill up all fields!" });
+        }
+
+        setLoading(true);
+
+        try {} catch(err: any) {} finally {
+            setLoading(false);
+        }
+    }
 
 	return (
         <ModalWrapper>
@@ -25,7 +39,7 @@ export default function PasswordChange({ }) {
                 <View style={styles.formItems}>
                     <View style={styles.inputContainer}>
                         <Typography fontFamily="urbanist-bold" color={Colors.textLighter}>
-                            Old Password
+                            Old Password <Asterisk />
                         </Typography>
                         <FormInput
                             placeholder="Enter your old password"
@@ -39,7 +53,7 @@ export default function PasswordChange({ }) {
                     </View>
                     <View style={styles.inputContainer}>
                         <Typography fontFamily="urbanist-bold" color={Colors.textLighter}>
-                            New Password
+                            New Password <Asterisk />
                         </Typography>
                         <FormInput
                             placeholder="Enter a new password"
@@ -55,8 +69,8 @@ export default function PasswordChange({ }) {
             </View>
 
             <View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
-                <Button onPress={() => {}} loading={loading}>
-                    <Typography size={Platform.OS == "ios" ? 20 : 25} color={Colors.background} fontFamily="urbanist-extrabold">Change Password</Typography>
+                <Button onPress={handleSubmit} loading={loading} disabled={loading} style={{ width: "100%" }}>
+                    <Typography size={Platform.OS == "ios" ? 22 : 25} color={Colors.white} fontFamily="urbanist-semibold">Change Password</Typography>
                 </Button>
             </View>
         </ModalWrapper>

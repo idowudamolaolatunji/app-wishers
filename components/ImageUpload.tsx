@@ -3,6 +3,7 @@ import { useTheme } from '@/hooks/useTheme'
 import { getFilePath } from '@/services/imageService'
 import { scale, verticalScale } from '@/utils/styling'
 import { ImageUploadProps } from '@/utils/types'
+import * as Burnt from "burnt"
 import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
 import * as Icons from "phosphor-react-native"
@@ -23,15 +24,20 @@ export default function ImageUpload({
     const { Colors } = useTheme();
 
     const handlePickImage = async function() {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
 
-        if(!result.canceled) {
-            onSelect(result.assets[0])
+            if(!result.canceled) {
+                onSelect(result.assets[0])
+            }
+        } catch(err: any) {
+            console.log("Error: ", err?.message);
+            Burnt.toast({ haptic: "error", title: "Image not supported, select a suppported image!" })
         }
     }
 

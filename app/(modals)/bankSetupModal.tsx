@@ -1,3 +1,4 @@
+import Asterisk from "@/components/Asterisk";
 import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import FormInput from "@/components/FormInput";
@@ -9,6 +10,7 @@ import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { handleFetchBanks, handleResolveAccount } from "@/services/bankServices";
 import { scale, verticalScale } from "@/utils/styling";
+import * as Burnt from "burnt";
 import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
@@ -90,6 +92,22 @@ export default function BankSetupModal() {
         setResolveFound({ status: false, foundName: "", message: "" });
     }, [bankData.bankName]);
 
+	const handleSubmit = async function() {
+		const { bankName, accountName, accountNumber }  = bankData;
+ 		if(!bankName || !accountName || !accountNumber) {
+			return Burnt.toast({ haptic: "error", title: "Please fill all the fields!" });
+		}
+		setLoading({ ...loading, main: true });
+
+		try {
+
+		} catch(err: any) {
+			Burnt.toast({ haptic: "error", title: err?.message });
+		} finally {
+			setLoading({ ...loading, main: true });
+		}
+	}
+
 	return (
 		<ModalWrapper>
 			<View style={styles.container}>
@@ -97,7 +115,7 @@ export default function BankSetupModal() {
 
 				<View style={styles.formItems}>
 					<View style={styles.inputContainer}>
-						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Bank Name</Typography>
+						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Bank Name <Asterisk /></Typography>
 						<Dropdown
 							style={[styles.dropdownContainer, { borderColor: BaseColors[ currentTheme == "dark" ? "neutral600" : "neutral300"], }]}
 							placeholderStyle={{ color: Colors.text, fontSize: 16 }}
@@ -125,7 +143,7 @@ export default function BankSetupModal() {
 
 							
 					<View style={styles.inputContainer}>
-						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Account Number</Typography>
+						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Account Number <Asterisk /></Typography>
 						<FormInput
 							placeholder='1230456078'
 							maxLength={10}
@@ -159,7 +177,7 @@ export default function BankSetupModal() {
 					</View>
 					
 					<View style={styles.inputContainer}>
-						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Account Name</Typography>
+						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Account Name <Asterisk /></Typography>
 						<FormInput
 							placeholder='Jane Doe Martha'
 							keyboardType="default"
@@ -171,8 +189,8 @@ export default function BankSetupModal() {
 			</View>
 
 			<View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
-				<Button onPress={() => {}} loading={loading.main} style={{ flex: 1 }}>
-					<Typography size={isIOS ? 20 : 23} color={Colors.background} fontFamily="urbanist-bold">
+				<Button onPress={handleSubmit} loading={loading.main} disabled={loading.main} style={{ width: "100%" }}>
+					<Typography size={isIOS ? 22 : 25} color={Colors.white} fontFamily="urbanist-semibold">
 						Add Bank Details
 					</Typography>
 				</Button>

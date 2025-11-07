@@ -145,8 +145,8 @@ export default function CreateEditWishlistModal() {
 			</View>
 
 			<View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
-				<Button onPress={handleSubmit} loading={loading} style={{ flex: 1 }} disabled={loading}>
-					<Typography size={Platform.OS == "ios" ? 20 : 23} color={BaseColors.white} fontFamily="urbanist-bold">
+				<Button onPress={handleSubmit} loading={loading} style={{ width: "100%" }} disabled={loading}>
+					<Typography size={Platform.OS == "ios" ? 22 : 25} color={BaseColors.white} fontFamily="urbanist-semibold">
 						{currentWishlistData?.id ? "Update" : "Create"} Wishlist
 					</Typography>
 				</Button>

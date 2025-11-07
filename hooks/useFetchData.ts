@@ -6,6 +6,7 @@ export default function useFetchData<T>(collectionName: string, constrains: Quer
 	const [data, setData] = useState<T[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [refetchTrigger, setRefetchTrigger] = useState(0); // helps us while refetching...
 
 	useEffect(function () {
 		if (!collectionName) return;
@@ -22,19 +23,27 @@ export default function useFetchData<T>(collectionName: string, constrains: Quer
 						...doc.data(),
 					};
 				}) as T[];
-				// console.log(fetchedData);
 				setData(fetchedData);
-				setLoading(false);
+				// setLoading(false);
+
+				// temp
+				if(refetchTrigger) {
+					setTimeout(() => setLoading(false), 200);
+				} else {
+					setLoading(false);
+				}
 			},
-			(err) => {
+			(err: any) => {
 				console.log("Error fetching data: ", err);
-				setError(err.message);
+				setError(err.message || "Oops Error!");
 				setLoading(false);
 			},
 		);
 
 		return () => unsub();
-	}, []);
+	}, [refetchTrigger]);
 
-	return { data, loading, error };
+	const refetch = () => setRefetchTrigger(prev => prev + 1);
+
+	return { data, loading, error, refetch };
 }

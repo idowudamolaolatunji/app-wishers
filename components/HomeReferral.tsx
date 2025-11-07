@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import * as Icons from "phosphor-react-native";
 import React from "react";
 import { Image, Platform, Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeInRight } from "react-native-reanimated";
 import Typography from "./Typography";
 
 const isIOS = Platform.OS === "ios";
@@ -12,8 +11,8 @@ export default function HomeReferral({ handleClose }: { handleClose: () => void 
     const router = useRouter();
 
 	return (
-		<Animated.View style={styles.container}
-            entering={FadeInRight.duration(1000)}
+		<View style={styles.container}
+            // entering={FadeInRight.duration(1000)}
         >
             <View style={styles.referralFlex}>
                 <Pressable style={styles.closeIcon} onPress={handleClose}>
@@ -56,7 +55,7 @@ export default function HomeReferral({ handleClose }: { handleClose: () => void 
                     resizeMode="contain"
                 />
             </View>
-        </Animated.View>
+        </View>
 	);
 }
 

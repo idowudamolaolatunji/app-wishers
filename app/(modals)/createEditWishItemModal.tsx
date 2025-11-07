@@ -247,8 +247,8 @@ export default function createEditWishItemModal() {
                     </Button>
                 )}
 
-                <Button onPress={handleSubmit} loading={loading} style={{ flex: 1 }}>
-                    <Typography size={isIOS ? 20 : 23} color={Colors.background} fontFamily="urbanist-bold">
+                <Button onPress={handleSubmit} loading={loading} disabled={loading} style={{ flex: 1 }}>
+                    <Typography size={isIOS ? 22 : 25} color={Colors.white} fontFamily="urbanist-semibold">
                         {currentWishData?.id ? "Update" : "Create"} Wish
                     </Typography>
                 </Button>

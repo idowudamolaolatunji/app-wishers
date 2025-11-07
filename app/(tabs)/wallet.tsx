@@ -11,8 +11,8 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { limit, orderBy, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
-import React from "react";
-import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { formatCurrency } from '../../utils/helpers';
 
 
@@ -22,8 +22,9 @@ export default function WalletScreen() {
 	const router = useRouter();
 	const { user } = useAuth();
 	const { Colors, currentTheme } = useTheme();
-
-	const { data: walletData, loading: walletLoading } = useFetchData<WalletType>(
+	const [refreshing, setRefreshing] = useState(false);
+	
+	const { data: walletData, loading: walletLoading, refetch: refetchWallet } = useFetchData<WalletType>(
 		"wallets", (user?.uid) ? [where("uid", "==", user.uid), limit(1)] : [],
 	);
 	const wallet = walletData?.[0];
@@ -32,7 +33,14 @@ export default function WalletScreen() {
 		? [where("uid", "==", user.uid), orderBy("created", "desc")]
 		: [orderBy("created", "desc")]
 	;
-	const { data: transactionData, error, loading: transactionLoading } = useFetchData<TransactionType>("transactions", constraints);
+	const { data: transactionData, error, loading: transactionLoading, refetch: refetchTransactions } = useFetchData<TransactionType>("transactions", constraints);
+
+	const handleRefresh = function() {
+		setRefreshing(true);
+		refetchWallet();
+		refetchTransactions();
+    	setRefreshing(false);
+	}
 
 	return (
 		<ScreenWrapper>
@@ -76,6 +84,12 @@ export default function WalletScreen() {
 					</View>
 
 					<ScrollView
+						refreshControl={
+							<RefreshControl
+								refreshing={refreshing}
+								onRefresh={handleRefresh}
+							/>
+						}
 						bounces={false}
 						// contentContainerStyle={styles.listContainer}
                     	showsVerticalScrollIndicator={false}
@@ -112,7 +126,6 @@ export default function WalletScreen() {
 						
 					</ScrollView>
 				</View>
-
             </View>
 		</ScreenWrapper>
 	);
