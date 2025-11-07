@@ -201,7 +201,7 @@ export default function wishlistDetailModal() {
                                 borderRadius: radius._6,
                             }}
                         >
-                            <TouchableOpacity onPress={handleEditAction} style={{ paddingHorizontal: spacingY._20, paddingVertical: spacingY._10 }}>
+                            <TouchableOpacity onPress={handleEditAction} style={{ paddingHorizontal: spacingY._20, paddingVertical: spacingY._10, borderBottomWidth: 1, borderBottomColor: BaseColors.neutral600 }}>
                                 <Typography fontFamily="urbanist-semibold" size={isIOS ? 18 : 20}>Edit</Typography>
                             </TouchableOpacity>
 

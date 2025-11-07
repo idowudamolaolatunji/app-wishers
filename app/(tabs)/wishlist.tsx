@@ -4,6 +4,7 @@ import Rangebar from "@/components/Rangebar";
 import ScreenHeader from "@/components/ScreenHeader";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Subscribe from "@/components/Subscribe";
+import SubscribeCompleted from "@/components/SubscribeCompleted";
 import Typography from "@/components/Typography";
 import WishInsight from "@/components/WishInsight";
 import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
@@ -12,6 +13,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import useFetchData from "@/hooks/useFetchData";
 import { useTheme } from "@/hooks/useTheme";
 import { getFilePath } from "@/services/imageService";
+import { processOneTimePayment } from "@/services/paymentService";
+import { updateUser } from "@/services/userService";
 import { calculatePercentage, formatCurrency, formatShortCurrency } from "@/utils/helpers";
 import { verticalScale } from "@/utils/styling";
 import { WishlistType } from "@/utils/types";
@@ -24,23 +27,28 @@ import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
 import { Platform, Pressable, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import ModalView from "react-native-modal";
+import { usePaystack } from "react-native-paystack-webview";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 const isIOS = Platform.OS === "ios";
 
 export default function WishlistScreen() {
 	const router = useRouter();
-    const { user } = useAuth();
-	const { Colors, currentTheme } = useTheme();
+    const { popup } = usePaystack();
     const { actions } = useAppContext();
-    const [showSubModal, setShowSubModal] = useState(false);
-	const [refreshing, setRefreshing] = useState(false);
+	const { Colors, currentTheme } = useTheme();
+    const { user, updateUserData } = useAuth();
 
-    const constraints = user?.uid 
-        ? [where("uid", "==", user.uid), orderBy("created", "desc")]
-        : [orderBy("created", "desc")]
-    ;
-    const { data, error, loading, refetch } = useFetchData<WishlistType>("wishlists", constraints);
+    const [showModal, setShowModal] = useState({ subscribe: false, completed: false });
+	const [refreshing, setRefreshing] = useState(false);
+    const [payLoaing, setPayLoading] = useState(false);
+
+    const discountPercentage = actions?.feeDiscountInPercentage;
+    const oneTimeFee = actions?.oneTimeFee;
+    const discountedAmount = oneTimeFee! * (1 - discountPercentage! / 100);
+    const checkoutAmount = discountPercentage ? discountedAmount! : actions?.oneTimeFee!
+
+    const { data, error, loading, refetch } = useFetchData<WishlistType>("wishlists", user?.uid ? [where("uid", "==", user.uid), orderBy("created", "desc")] : [orderBy("created", "desc")]);
     const completed = data?.filter(list => list && list?.isCompleted);
 
     const handleRefresh = function() {
@@ -61,7 +69,7 @@ export default function WishlistScreen() {
 
     const handleAddWishlist = function() {
         if(actions?.shouldPayOneTimeFee && !user?.isSubscribed) {
-            setShowSubModal(true);
+            setShowModal({ ...showModal, subscribe: true });
         } else {
             if(data?.length >= actions?.wishlistCreationLimit!) {
                 Burnt.toast({ haptic: "error", title: `You cannot create more than ${actions?.wishlistCreationLimit} wishlists` })
@@ -69,6 +77,35 @@ export default function WishlistScreen() {
                 router.push("/(modals)/createEditWishlistModal")
             }
         }
+    }
+
+    const handleOneTimePayment = function() {
+        popup.newTransaction({
+            email: user?.email!,
+            amount: checkoutAmount,
+            reference: `TNX_${Date.now()}`,
+            onError: (err) => console.log("Error:", err),
+            onLoad: () => console.log("Webview Loaded!"),
+            onCancel: () => Burnt.toast({ haptic: "error", title: "Payment Cancelled!" }),
+            onSuccess: async (res) => {
+                setPayLoading(true);
+                const status = await processOneTimePayment(res.reference, user?.uid!, checkoutAmount);
+                if(status.success) {
+                    const res = await updateUser(user?.uid!, { isSubscribed: true })
+                    if(res.success) {
+                        updateUserData(user?.uid! as string)
+                        setTimeout(() => {
+                            setPayLoading(false);
+                            setShowModal({ subscribe: false, completed: true });
+                        }, 500);
+                        
+                        Burnt.toast({ haptic: "success", title: "Payment Successful!" });
+                    }
+                } else {
+                    Burnt.toast({ haptic: "error", title: "Payment failed!, Please Contact Support" })
+                }
+            },
+        });
     }
 
 	return (
@@ -183,27 +220,39 @@ export default function WishlistScreen() {
                 </Button>
             </View>
 
+            {/* COMPLETED PAYMENT */}
+            <ModalView
+                isVisible={showModal.completed}
+                backdropOpacity={0.7}
+                backdropTransitionInTiming={800}
+                backdropTransitionOutTiming={500}
+                onBackdropPress={() => setShowModal({ ...showModal, completed: false })}
+            >
+                <SubscribeCompleted
+                    handleFinish={() => {
+                        setShowModal({ ...showModal, completed: false });
+                        router.push("/createEditWishlistModal");
+                    }}
+                />
+            </ModalView>
+
             {/* ONE-TIME PAYMENT MODAL */}
             <ModalView
-                isVisible={showSubModal}
+                isVisible={showModal.subscribe}
                 backdropOpacity={0.7}
                 backdropTransitionInTiming={800}
                 backdropTransitionOutTiming={500}
             >
-                <Subscribe handleClose={() => setShowSubModal(false)} />
+                <Subscribe
+                    loading={payLoaing}
+                    handlePay={handleOneTimePayment}
+                />
                 
                 <Pressable
-                    onPress={() => setShowSubModal(false)}
-                    style={{
-                        width: verticalScale(50),
-                        height: verticalScale(50),
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: BaseColors.neutral800,
-                        borderRadius: 70,
-                        alignSelf: "center",
-                        marginTop: spacingY._10
-                    }}
+                    onPress={() => {
+                        setShowModal({ ...showModal, subscribe: false })}
+                    }
+                    style={styles.closeButton}
                 >
                     <Icons.XIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
                 </Pressable>
@@ -311,4 +360,14 @@ const styles = StyleSheet.create({
 		bottom: verticalScale(30),
 		right: verticalScale(15),
 	},
+    closeButton: {
+        width: verticalScale(50),
+        height: verticalScale(50),
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: BaseColors.neutral800,
+        borderRadius: 70,
+        alignSelf: "center",
+        marginTop: spacingY._10
+    },
 })

@@ -50,8 +50,10 @@ export default function HomeReferral({ handleClose }: { handleClose: () => void 
                 </View>
 
                 <Image
-                    source={require("@/assets/images/icon-confetti.png")}
-                    style={{ height: 85 }}
+                    // source={require("@/assets/images/icon-confetti.png")}
+                    // style={{ height: 85 }}
+                    source={require("@/assets/images/icon-gift.png")}
+                    style={{ height: 80 }}
                     resizeMode="contain"
                 />
             </View>

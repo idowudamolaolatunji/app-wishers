@@ -85,7 +85,7 @@ export default function HomeScreen() {
 							<View>
 								<View style={styles.totalBalanceRow}>
 									<Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={isIOS ? 17 : 19}>
-										Your All-time Balance
+										All Time Earnings
 									</Typography>
 									<Icons.DotsThreeOutlineIcon
 										size={verticalScale(23)}
@@ -127,7 +127,7 @@ export default function HomeScreen() {
 										<View style={[styles.statsIcon, { alignSelf: "flex-end", borderRadius: 100 }]}>
 											<Icons.UsersThreeIcon
 												// color={BaseColors.neutral800}
-												color={BaseColors.violet}
+												color={BaseColors.lemon}
 												size={verticalScale(16)}
 												weight="bold"
 											/>
@@ -138,7 +138,7 @@ export default function HomeScreen() {
 									</View>
 
 									<View style={{ alignSelf: "flex-end" }}>
-										<Typography size={isIOS ? 17 : 20} color={BaseColors.violet} fontFamily="urbanist-bold">
+										<Typography size={isIOS ? 17 : 20} color={BaseColors.lemon} fontFamily="urbanist-bold">
 											{walletLoading ? "---" : formatCurrency(wallet?.referralEarnings ?? 0, 0)}
 										</Typography>
 									</View>
