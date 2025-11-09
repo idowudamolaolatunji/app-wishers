@@ -85,7 +85,7 @@ export default function HomeScreen() {
 							<View>
 								<View style={styles.totalBalanceRow}>
 									<Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={isIOS ? 17 : 19}>
-										All Time Earnings
+										All-Time Accumulated
 									</Typography>
 									<Icons.DotsThreeOutlineIcon
 										size={verticalScale(23)}
@@ -111,7 +111,7 @@ export default function HomeScreen() {
 											/>
 										</View>
 										<Typography size={isIOS ? 16 : 17.5} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
-											Amount Raised
+											Total Raised
 										</Typography>
 									</View>
 
@@ -133,7 +133,7 @@ export default function HomeScreen() {
 											/>
 										</View>
 										<Typography size={isIOS ? 16 : 18} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
-											Referrals invited
+											Referrals
 										</Typography>
 									</View>
 

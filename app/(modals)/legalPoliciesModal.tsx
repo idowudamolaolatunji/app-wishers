@@ -22,7 +22,7 @@ export default function LegalPoliciesModal() {
                 <ScreenHeader title='Legals & Policies' leftElement={<BackButton />} style={{ marginBottom: spacingY._40 }} />
 
                 <View style={{ flex: 1, gap: spacingY._5 }}>
-                    <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("https://wishlink.app/privacy-policy")}>
+                    <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("https://wishers.app/privacy-policy")}>
                         <Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium">Privacy Policies</Typography>
 
                         <CaretRightIcon
@@ -31,7 +31,7 @@ export default function LegalPoliciesModal() {
                         />
                     </TouchableOpacity>
 
-                    <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("https://wishlink.app/terms-of-use")}>
+                    <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("https://wishers.app/terms-of-use")}>
                         <Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium">Terms of Use</Typography>
 
                         <CaretRightIcon

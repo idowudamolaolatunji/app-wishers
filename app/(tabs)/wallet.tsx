@@ -110,7 +110,7 @@ export default function WalletScreen() {
 								}}
 							>
 								<Image
-									source={require("@/assets/images/icon-transaction.png")}
+									source={require("@/assets/images/icon-naira.png")}
 									style={{ width: verticalScale(95), height: verticalScale(95), }}
 									contentFit="cover"
 								/>

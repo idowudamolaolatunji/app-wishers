@@ -36,7 +36,7 @@
 //                 <View>
 //                     <View style={styles.totalBalanceRow}>
 //                         <Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={isIOS ? 17 : 19}>
-//                             All Time Earnings
+//                             All Time Raised
 //                         </Typography>
 //                         <Icons.DotsThreeOutlineIcon
 //                             size={verticalScale(23)}

@@ -8,13 +8,19 @@ import Typography from './Typography';
 
 const isIOS = Platform.OS === "ios";
 
-export default function ReusableCheckOption({ title, text }: { title: string; text: string;}) {
+export default function ReusableCheckOption({ icon, title, text }: { icon?: React.ReactNode; title: string; text: string;}) {
     const { Colors, currentTheme } = useTheme();
 
     return (
         <View style={styles.container}>
             <View style={[styles.iconContainer, { backgroundColor: currentTheme == "dark" ? "#dcfce733" : BaseColors.neutral200, borderRadius: 100, }]}>
-                <CheckIcon color={BaseColors.primaryLight} size={20.5} weight='bold' />
+                {icon ? (
+                    <React.Fragment>
+                        {icon}
+                    </React.Fragment>
+                ) : (
+                    <CheckIcon color={BaseColors.primaryLight} size={20.5} weight='bold' />
+                )}
             </View>
 
             <View style={{ gap: spacingY._3 }}>

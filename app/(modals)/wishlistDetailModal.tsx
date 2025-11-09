@@ -6,6 +6,7 @@ import ConfettiEL from "@/components/ConfettiEL";
 import DeleteItem from "@/components/DeleteItem";
 import Loading from "@/components/Loading";
 import ModalWrapper from "@/components/ModalWrapper";
+import QrCode from "@/components/QrCode";
 import Rangebar from "@/components/Rangebar";
 import ScreenHeader from "@/components/ScreenHeader";
 import Typography from "@/components/Typography";
@@ -26,7 +27,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { limit, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
-import { Platform, RefreshControl, ScrollView, Share, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, Pressable, RefreshControl, ScrollView, Share, StyleSheet, TouchableOpacity, View } from "react-native";
+import ModalView from "react-native-modal";
 import Animated, { FadeInDown, useSharedValue } from "react-native-reanimated";
 
 const isIOS = Platform.OS === "ios";
@@ -40,6 +42,7 @@ export default function wishlistDetailModal() {
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
     const [loading, setLoading] = useState({ delete: false, share: false });
     const [showConfetti, setShowConfetti] = useState(false);
+    const [showQr, setShowQr] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 
     const isOpen = useSharedValue(false);
@@ -77,6 +80,11 @@ export default function wishlistDetailModal() {
             return error;
         }
     };
+
+    const handleQrCode = function() {
+        setShowQr(true);
+
+    }
 
     // CREATE ACTION TO GO TO THE CREATE WISHITEM PAGE WITH WISHLIST ID AND WISHLIST SLUG, ALSO CHECKING IF LIMIT IS EXCEEDED
     const handleCreateAction = function() {
@@ -287,19 +295,31 @@ export default function wishlistDetailModal() {
                             </View>
 
                             {(wishlist?.totalWishItems && wishlist?.totalWishItems > 0) ? (
-                                <Button onPress={handleShare} disabled={loading.share} style={{ flexDirection: "row", alignItems: "center", gap: spacingY._5, backgroundColor: BaseColors.accentDarker }}>
-                                    {loading.share ? (
-                                        <Loading color={BaseColors.neutral700} />
-                                    ) : (
-                                        <React.Fragment>
-                                            <Typography size={isIOS ? 20 : 22} color={BaseColors.neutral800} fontFamily="urbanist-semibold">
-                                                Share Link
-                                            </Typography>
-        
-                                            <Icons.ShareFatIcon color={BaseColors.neutral800} weight="bold" size={verticalScale(24)} />
-                                        </React.Fragment>
-                                    )}
-                                </Button>
+                                <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", gap: scale(12) }}>
+                                    <Button onPress={handleShare} disabled={loading.share} style={{ flexDirection: "row", alignItems: "center", gap: spacingY._5, backgroundColor: BaseColors.accentDarker, flex: 1 }}>
+                                        {loading.share ? (
+                                            <Loading color={BaseColors.neutral700} />
+                                        ) : (
+                                            <React.Fragment>
+                                                <Typography size={isIOS ? 20 : 22} color={BaseColors.neutral800} fontFamily="urbanist-semibold">
+                                                    Share Link
+                                                </Typography>
+            
+                                                <Icons.ShareFatIcon color={BaseColors.neutral800} weight="bold" size={verticalScale(24)} />
+                                            </React.Fragment>
+                                        )}
+                                    </Button>
+
+                                    <Button
+                                        onPress={() => setShowQr(true)}
+                                        style={{
+                                            backgroundColor: Colors[currentTheme == "dark" ? "background300" : "background200"],
+                                            paddingHorizontal: spacingX._15,
+                                        }}
+                                    >
+                                        <Icons.QrCodeIcon color={Colors.text} weight="bold" size={verticalScale(24)} />
+                                    </Button>
+                                </View>
                             ) : (
                                 null
                             )}
@@ -362,6 +382,31 @@ export default function wishlistDetailModal() {
                 )}
             </ScrollView>
 
+            {/*  */}
+            <ModalView
+                isVisible={showQr}
+                backdropOpacity={0.7}
+                backdropTransitionInTiming={800}
+                backdropTransitionOutTiming={500}
+                onBackdropPress={() => setShowQr(false)}
+            >
+                <View style={{ alignItems: "center", gap: spacingY._10 }}>
+                    <Typography size={verticalScale(Platform.OS == "ios" ? 27 : 30)} color={BaseColors.white} fontFamily="urbanist-bold">Scan your QR Code</Typography>
+                    <QrCode link={wishlist?.link!} />
+                    <View style={{ alignItems: "center", flexDirection: "row", gap: spacingX._15, }}>
+                        <Pressable onPress={() => setShowQr(false)} style={styles.closeButton}>
+                            <Icons.XIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                        </Pressable>
+                        <Pressable onPress={handleShare} style={styles.closeButton}>
+                            {loading.share ? <Loading color={BaseColors.white} /> : 
+                                <Icons.ShareFatIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                            }
+                        </Pressable>
+                    </View>
+                </View>
+            </ModalView>
+
+            {/* BOTTOM SHEET FOR DELETE WISHLIST */}
             <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet} customHeight={verticalScale(350)}>
                 <ScreenHeader title='Delete this Wishlist' leftElement={<BackButton iconType="cancel" customAction={toggleSheet} />} style={{ marginBottom: spacingY._10 }} />
             
@@ -489,5 +534,14 @@ const styles = StyleSheet.create({
     itemDetails: {
         flex: 1,
         gap: spacingY._7,
+    },
+    closeButton: {
+        width: verticalScale(50),
+        height: verticalScale(50),
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: BaseColors.neutral800,
+        borderRadius: 70,
+        alignSelf: "center",
     },
 });

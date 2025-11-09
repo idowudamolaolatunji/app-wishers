@@ -27,7 +27,7 @@ export const createOrUpdateWishlist = async function (wishlistData: Partial<Wish
             wishlistToSave.isCompleted = false;
             wishlistToSave.active = true;
             wishlistToSave.slug = `${slug}`;
-            wishlistToSave.link = `https://pay.wishlink.app/w/${slug}`;
+            wishlistToSave.link = `https://pay.wishers.app/w/${slug}`;
             wishlistToSave.wishes = [];
             wishlistToSave.created = new Date();
         }

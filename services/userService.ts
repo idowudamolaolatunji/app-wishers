@@ -23,3 +23,4 @@ export const updateUser = async function(uid: string, updatedData: UserDataType)
         return { success: false, msg: err?.message }
     }
 }
+

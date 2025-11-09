@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "WishLink",
-    "slug": "app-wishlink",
+    "name": "Wishers",
+    "slug": "app-wishers",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "appwishlink",
+    "scheme": "appwishers",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.idowudamolaolatunji.appwishlink",
+      "bundleIdentifier": "com.idowudamolaolatunji.appwishers",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.idowudamolaolatunji.appwishlink"
+      "package": "com.idowudamolaolatunji.appwishers"
     },
     "web": {
       "output": "static",
@@ -55,7 +55,7 @@
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+          "faceIDPermission": "Allow Wishers App to use Face ID."
         }
       ],
       "expo-secure-store"

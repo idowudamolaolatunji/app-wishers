@@ -6,6 +6,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { formatCurrency } from "@/utils/helpers";
 import { verticalScale } from "@/utils/styling";
 import LottieView from "lottie-react-native";
+import * as Icons from "phosphor-react-native";
 import { CreditCardIcon } from "phosphor-react-native";
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
@@ -52,18 +53,22 @@ export default function Subscribe({ loading, handlePay }: { loading: boolean; ha
 
             <View style={styles.listContainer}>
                 <ReusableCheckOption
+                    icon={<Icons.ListChecksIcon color={BaseColors.primaryLight} size={20.5} weight='bold' />}
                     title="Unlimited Wishlists"
                     text="Create as many wishlist as you want."
                 />
                 <ReusableCheckOption
-                    title="Unlimited Wihses"
-                    text="Add unlimited gifts to each wishlist."
+                    icon={<Icons.SealCheckIcon color={BaseColors.primaryLight} size={20.5} weight='bold' />}
+                    title="Verification Badge"
+                    text="Look presentable to your givers."
                 />
                 <ReusableCheckOption
+                    icon={<Icons.HeadsetIcon color={BaseColors.primaryLight} size={20.5} weight='bold' />}
                     title="Priority Support"
                     text="Get help when you need it."
                 />
                 <ReusableCheckOption
+                    icon={<Icons.HandCoinsIcon color={BaseColors.primaryLight} size={20.5} weight='bold' />}
                     title="Seemless Withdrawal"
                     text="Withdraw your earnings any day, any time."
                 />

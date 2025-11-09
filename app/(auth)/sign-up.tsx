@@ -121,9 +121,9 @@ export default function SignupScreen() {
 
                         <View style={{ alignSelf: "flex-start", flexDirection: "row", gap: 3, alignItems: "center" }}>
                             <Typography size={Platform.OS == "ios" ? 14 : 16} color={Colors.text}>
-                                By clicking continue, you are agreeing to our
+                                By clicking "Sign Up", you are agreeing to our
                             </Typography>
-                            <Pressable onPress={() => router.push("https://wishlink.app/terms-of-use")}>
+                            <Pressable onPress={() => router.push("https://wishers.app/terms-of-use")}>
                                 <Typography size={Platform.OS == "ios" ? 14 : 16} color={Colors.text} style={{ textDecorationLine: "underline" }}>
                                     terms of use
                                 </Typography>

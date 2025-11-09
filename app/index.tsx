@@ -1,6 +1,7 @@
 import { useTheme } from '@/hooks/useTheme';
+import { Image } from 'expo-image';
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export default function index() {
     const { Colors } = useTheme();
@@ -9,8 +10,8 @@ export default function index() {
         <View style={[styles.container, { backgroundColor: Colors.background }]}>
             <Image
                 style={styles.logo}
-                resizeMode='contain'
-                source={require("../assets/images/android-icon-foreground.png")}
+                contentFit='contain'
+                source={require("../assets/svgs/logo.svg")}
             />
         </View>
     )
