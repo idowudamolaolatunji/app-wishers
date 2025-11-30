@@ -3,10 +3,9 @@ import { useTheme } from '@/hooks/useTheme';
 import { verticalScale } from '@/utils/styling';
 import { CheckIcon } from 'phosphor-react-native';
 import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Typography from './Typography';
 
-const isIOS = Platform.OS === "ios";
 
 export default function ReusableCheckOption({ icon, title, text }: { icon?: React.ReactNode; title: string; text: string;}) {
     const { Colors, currentTheme } = useTheme();
@@ -24,7 +23,7 @@ export default function ReusableCheckOption({ icon, title, text }: { icon?: Reac
             </View>
 
             <View style={{ gap: spacingY._3 }}>
-                <Typography size={isIOS ? 17 : 19} fontFamily="urbanist-semibold">{title}</Typography>
+                <Typography size={18} fontFamily="urbanist-semibold">{title}</Typography>
                 <Typography size={16} color={Colors.textLighter}>{text}</Typography>
             </View>
         </View>

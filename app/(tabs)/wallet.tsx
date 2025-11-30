@@ -1,4 +1,3 @@
-import BackdropOverlay from "@/components/BackdropOverlay";
 import Loading from "@/components/Loading";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { TransactionItem } from "@/components/TransactionList";
@@ -15,11 +14,10 @@ import { useRouter } from "expo-router";
 import { limit, orderBy, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
-import { Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { formatCurrency } from '../../utils/helpers';
 
 
-const isIOS = Platform.OS === "ios"
 
 export default function WalletScreen() {
 	const router = useRouter();
@@ -45,7 +43,7 @@ export default function WalletScreen() {
 	}
 
 	const handleClickTransaction = function(item: TransactionType) {
-		router.push({ pathname: "/(modals)/contributionTransactionModal", params: { id: item?.id, } })
+		router.push({ pathname: "/(modals)/transactionModal", params: { id: item?.id, } })
 	}
 
 	return (
@@ -54,27 +52,46 @@ export default function WalletScreen() {
                 {/* balance */}
 				<View style={[styles.balanceView]}>
 					<View style={{ alignItems: "center" }}>
-						<Typography size={isIOS ? 42 : 45} fontFamily="urbanist-semibold">
+						<Typography size={42.5} fontFamily="urbanist-semibold">
 							{walletLoading ? "----" : formatCurrency(wallet?.remainingBalance ?? 0)}
 						</Typography>
-						<Typography size={isIOS ? 16 : 18} color={Colors.textLighter} fontFamily="urbanist-medium">
+						<Typography size={17} color={Colors.textLighter} fontFamily="urbanist-medium">
 							Remaining Balance
 						</Typography>
+
+						{wallet?.remainingBalance >= 1000 && (
+							<TouchableOpacity
+								onPress={() => router.push("/(modals)/withdrawalModal")}
+								style={{
+									marginTop: spacingY._10,
+									padding: spacingY._10,
+									paddingVertical: spacingY._7,
+									borderRadius: radius._6,
+									flexDirection: "row",
+									alignItems: "center",
+									gap: spacingY._5,
+									backgroundColor: BaseColors.accentDarker,
+								}}
+							>
+								<Icons.CurrencyNgnIcon color={BaseColors.primary} weight="bold" size={verticalScale(18)} />
+								<Typography fontFamily="urbanist-bold" size={19} color={BaseColors.primary}>Withdral Funds</Typography>
+							</TouchableOpacity>
+						)}
 					</View>
 				</View>
 
 				<View style={[styles.transactionView, { backgroundColor: Colors[currentTheme == "dark" ? "background300" : "cardBackground"] }]}>
 
-					<View style={styles.flexRow}>
-						<Typography size={isIOS ? 20 : 23} fontFamily="urbanist-semibold">My Transactions</Typography>
+					{/* <View style={styles.flexRow}>
+						<Typography size={21} fontFamily="urbanist-semibold">My Transactions</Typography>
 
 						<TouchableOpacity
 							// onPress={() => router.push("/(modals)/withdrawalModal")}
 							onPress={() => setShowOptionsMenu(true)}
 							activeOpacity={0.75}
 							style={{
-								width: verticalScale(isIOS ? 37 : 40),
-								height: verticalScale(isIOS ? 37 : 40),
+								width: verticalScale(37.5),
+								height: verticalScale(37.5),
 								backgroundColor: BaseColors.accent,
 								alignItems: "center",
 								justifyContent: "center",
@@ -87,60 +104,7 @@ export default function WalletScreen() {
 								size={verticalScale(30)}
 							/>
 						</TouchableOpacity>
-					</View>
-
-					{showOptionsMenu && (
-						<React.Fragment>
-							<BackdropOverlay handleClose={() => setShowOptionsMenu(false)} />
-							<View 
-								style={{
-									position: "absolute",
-									top: verticalScale(40),
-									right: verticalScale(60),
-									zIndex: 105,
-									backgroundColor: Colors.background300,
-									padding: spacingY._5,
-									borderRadius: radius._6,
-								}}
-							>
-								<TouchableOpacity
-									onPress={() => {
-										router.push("/(modals)/withdrawalModal");
-										setShowOptionsMenu(false);
-									}}
-									style={{
-										paddingHorizontal: spacingY._20,
-										paddingVertical: spacingY._10,
-										flexDirection: "row",
-										alignItems: "center",
-										gap: spacingY._10,
-										borderBottomWidth: 1,
-										borderBottomColor: BaseColors.neutral600
-									}}
-								>
-									<Icons.CurrencyNgnIcon color={Colors.text} weight="bold" size={verticalScale(18)} />
-									<Typography fontFamily="urbanist-semibold" size={isIOS ? 18 : 20}>Withdral Funds</Typography>
-								</TouchableOpacity>
-
-								<TouchableOpacity
-									onPress={() => {
-										router.push("/(modals)/withdrawalModal");
-										setShowOptionsMenu(false);
-									}}
-									style={{
-										paddingHorizontal: spacingY._20,
-										paddingVertical: spacingY._10,
-										flexDirection: "row",
-										alignItems: "center",
-										gap: spacingY._10,
-									}}
-								>
-									<Icons.ClockCounterClockwiseIcon color={Colors.text} weight="bold" size={verticalScale(18)} />
-									<Typography fontFamily="urbanist-semibold" size={isIOS ? 18 : 20}>View History</Typography>
-								</TouchableOpacity>
-							</View>
-						</React.Fragment>
-					)}
+					</View> */}
 
 					<ScrollView
 						refreshControl={
@@ -155,13 +119,13 @@ export default function WalletScreen() {
 					>
 
 						{transactionLoading && (
-							<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+							<View style={{ flex: 1, alignItems: "center", justifyContent: "center", height: 200, }}>
 								<Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
 							</View>
 						)}
 
 						{(!transactionLoading && transactionData.length > 0) && (
-							 <View style={{ minHeight: 3 }}>
+							<View style={{ minHeight: 3 }}>
 								<FlashList
 									data={transactionData as TransactionType[]}
 									renderItem={({ item, index }) => (
@@ -177,7 +141,7 @@ export default function WalletScreen() {
 								style={{
 									alignItems: "center",
 									justifyContent: "center",
-									marginTop: spacingY._50
+									marginTop: spacingY._50,
 								}}
 							>
 								<Image
@@ -186,7 +150,7 @@ export default function WalletScreen() {
 									contentFit="cover"
 								/>
 								<Typography
-									size={isIOS ? 15 : 17}
+									size={15.5}
 									color={Colors.textLighter}
 									style={{ textAlign: "center", marginTop: spacingY._15 }}
 								>
@@ -209,7 +173,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
     },
 	balanceView: {
-		height: verticalScale(160),
+		height: verticalScale(180),
 		alignItems: "center",
 		justifyContent: "center",
 	},
@@ -217,14 +181,13 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginBottom: spacingY._10,
 	},
 	transactionView: {
+		backgroundColor:"red",
 		flex: 1,
-		gap: spacingY._25,
+		gap: spacingY._5,
 		borderTopRightRadius: radius._30,
 		borderTopLeftRadius: radius._30,
-		padding: spacingX._18,
-		paddingTop: spacingX._25
+		paddingHorizontal: spacingX._18,
 	},
 });

@@ -5,63 +5,63 @@ import { verticalScale } from '@/utils/styling'
 import { TransactionItemProps, TransactionListType, TransactionType } from '@/utils/types'
 import { FlashList } from "@shopify/flash-list"
 import { useRouter } from 'expo-router'
+import * as Icons from "phosphor-react-native"
 import React from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import Loading from './Loading'
 import Typography from './Typography'
 
-const isIOS = Platform.OS === "ios"
 
 export default function TransactionList({ data, title, loading }: TransactionListType) {
     const router = useRouter();
     const { Colors, currentTheme } = useTheme();
 
     const handleClick = function(item: TransactionType) {
-        router.push({ pathname: "/(modals)/contributionTransactionModal", params: { id: item?.id, } })
+        router.push({ pathname: "/(modals)/transactionModal", params: { id: item?.id, } })
     }
 
-  return (
-    <View style={styles.container}>
-        {title && (
-            <Typography size={isIOS ? 21 : 23} fontFamily="urbanist-semibold" color={Colors.text}>
-                {title}
-            </Typography>
-        )}
+    return (
+        <View style={styles.container}>
+            {title && (
+                <Typography size={21} fontFamily="urbanist-semibold" color={Colors.text}>
+                    {title}
+                </Typography>
+            )}
 
-        {(loading) && (
-            <View style={{ top: verticalScale(30) }}>
-                <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accent"]} />
-            </View>
-        )}
+            {(loading) && (
+                <View style={{ top: verticalScale(30) }}>
+                    <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accent"]} />
+                </View>
+            )}
 
-        {(!loading && data.length > 0) && (
-            <View style={styles.list}>
-                <FlashList
-                    data={data}
-                    renderItem={({ item, index }) => (
-                        <TransactionItem key={index} item={item as TransactionType} index={index} handleClick={handleClick} />
-                    )}
-                    {...({ estimatedItemSize: 60 } as any)}
-                />
-            </View>
-        )}
+            {(!loading && data.length > 0) && (
+                <View style={styles.list}>
+                    <FlashList
+                        data={data}
+                        renderItem={({ item, index }) => (
+                            <TransactionItem key={index} item={item as TransactionType} index={index} handleClick={handleClick} />
+                        )}
+                        {...({ estimatedItemSize: 60 } as any)}
+                    />
+                </View>
+            )}
 
-        {/* {(!loading && data.length < 1) && (
-            <Typography
-                size={isIOS ? 15 : 17}
-                color={Colors.textLighter}
-                style={{ textAlign: "center", marginTop: spacingY._15 }}
-            >
-                {emptyListMessage}
-            </Typography>
-        )} */}
-    </View>
-  )
+            {/* {(!loading && data.length < 1) && (
+                <Typography
+                    size={15.5}
+                    color={Colors.textLighter}
+                    style={{ textAlign: "center", marginTop: spacingY._15 }}
+                >
+                    {emptyListMessage}
+                </Typography>
+            )} */}
+        </View>
+    )
 }
 
 export function TransactionItem({ item, index, handleClick }: TransactionItemProps) {
-    const { Colors } = useTheme();
+    const { Colors, currentTheme } = useTheme();
 
     // const date = item?.paidAt && (item?.paidAt as Timestamp)?.toDate()?.toLocaleDateString("en-Gb", {
     //     day: "numeric",
@@ -71,19 +71,29 @@ export function TransactionItem({ item, index, handleClick }: TransactionItemPro
     return (
         <Animated.View entering={FadeInDown.delay(index * 70)}>
             <TouchableOpacity
-                activeOpacity={0.8}
-                style={[styles.row, { backgroundColor: Colors.cardBackground }]}
-                onPress={() => handleClick(item)}
+                activeOpacity={1}
+                style={[styles.row, { backgroundColor: Colors[currentTheme == "dark" ? "cardBackground" : "background300"], marginTop: index == 0 ? spacingY._20 : 0 }]}
+                // onPress={() => handleClick(item)}
             >
+                <View style={[styles.imageContainer, { backgroundColor: BaseColors[item?.type == "Withdrawal" ? "brownAccent" : "violetAccent"] }]}>
+                    {item?.type == "Withdrawal" ? (
+                        <Icons.HandWithdrawIcon color={BaseColors.brown} weight="bold" size={25} />
+                    ) : (
+                        <Icons.HandDepositIcon color={BaseColors.blue} weight="bold" size={25} />
+                    )}
+                </View>
+                
+
                 <View style={styles.details}>
                     <Typography
-                        size={isIOS ? 17 : 20.5}
+                        size={20}
                         fontFamily="urbanist-semibold"
+                        style={{ textTransform: "capitalize" }}
                     >
-                        From {item.type}
+                        {item.type}
                     </Typography>
                     <Typography
-                        size={isIOS ? 12 : 15}
+                        size={14}
                         color={Colors.textLighter}
                         textProps={{ numberOfLines: 2 }}
                         fontFamily="urbanist-medium"
@@ -93,8 +103,8 @@ export function TransactionItem({ item, index, handleClick }: TransactionItemPro
                 </View>
 
                 <View style={styles.amountDetails}>
-                    <Typography size={isIOS ? 17 : 20} fontFamily="urbanist-bold" color={BaseColors.primaryLight}>{formatCurrency(item.amount ?? 0, 0)}</Typography>
-                    <Typography size={isIOS ? 12 : 15} fontFamily="urbanist-medium" color={Colors.textLighter}>{formatDate(item?.paidAt)}</Typography>
+                    <Typography size={18} fontFamily="urbanist-bold" color={BaseColors[item?.type == "Withdrawal" ? "brown" : currentTheme == "dark" ? "primary" : "blue"]}>{formatCurrency(item.amount ?? 0, 0)}</Typography>
+                    <Typography size={12.5} fontFamily="urbanist-medium" color={Colors.textLighter}>{formatDate(item?.paidAt)}</Typography>
                 </View>
             </TouchableOpacity>
         </Animated.View>
@@ -113,7 +123,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         gap: spacingX._12,
-        marginBottom: spacingY._10,
+        marginBottom: spacingY._7,
         padding: spacingY._10,
         paddingHorizontal: spacingY._10,
         borderRadius: radius._12,
@@ -122,10 +132,13 @@ const styles = StyleSheet.create({
     imageContainer: {
         justifyContent: "center",
         alignItems: "center",
+        width: verticalScale(45),
+        height: verticalScale(45),
+        borderRadius: radius._10,
     },
     details: {
         flex: 1,
-        gap: 2,
+        gap: spacingY._5,
     },
     amountDetails: {
         alignItems: "flex-end",

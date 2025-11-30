@@ -16,7 +16,6 @@ import React, { useState } from 'react'
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import ToggleSwitch from 'toggle-switch-react-native'
 
-const isIOS = Platform.OS === "ios";
 
 export default function SettingsModal() {
     const router = useRouter();
@@ -54,14 +53,14 @@ export default function SettingsModal() {
     return (
         <ModalWrapper>
             <View style={styles.container}>
-                <ScreenHeader title='Settings & Account' leftElement={<BackButton />} style={{ marginBottom: spacingY._30 }} />
+                <ScreenHeader title='Apperance & Security' leftElement={<BackButton />} style={{ marginBottom: spacingY._30 }} />
 
                 <ScrollView contentContainerStyle={styles.contentView}>
                     <View style={{ borderRadius: radius._6 }}>
-                        <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 16.5 : 20)} style={{ marginBottom: spacingY._15 }}>Security & Biometrics</Typography>
+                        <Typography fontFamily="urbanist-semibold" size={verticalScale(17)} style={{ marginBottom: spacingY._15 }}>Security & Biometrics</Typography>
 
                         <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("/(modals)/passwordChangeModal")}>
-                            <Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium">Change Password</Typography>
+                            <Typography size={17} fontFamily="urbanist-medium">Change Password</Typography>
 
                             <Icons.CaretRightIcon
                                 size={verticalScale(20)}
@@ -71,7 +70,7 @@ export default function SettingsModal() {
                                 
                         {(isBiometricSupported && isEnrolled) && (
                             <View style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]}>
-                                <Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium">Login with {isIOS ? "Face ID or Pin" : "Fingerprint"}</Typography>
+                                <Typography size={17} fontFamily="urbanist-medium">Login with {Platform.OS === "ios" ? "Face ID or Pin" : "Fingerprint"}</Typography>
                                 
                                 {!loading.biometric && (
                                     <ToggleSwitch
@@ -87,7 +86,7 @@ export default function SettingsModal() {
                     </View>
 
                     <View style={{ borderRadius: radius._6 }}>
-                        <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 16.5 : 20)} style={{ marginBottom: spacingY._15 }}>Theme Setting</Typography>
+                        <Typography fontFamily="urbanist-semibold" size={verticalScale(17)} style={{ marginBottom: spacingY._15 }}>Theme Setting</Typography>
 
                         <ThemeButton
                             title='Light'

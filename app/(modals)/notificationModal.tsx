@@ -6,10 +6,9 @@ import { spacingY } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { scale } from "@/utils/styling";
 import React, { useState } from "react";
-import { Image, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 
 
-const isIOS = Platform.OS === "ios";
 export default function NotificationModal() {
     const [loading, setLoading] = useState(false);
     const notifications = [];
@@ -30,7 +29,7 @@ export default function NotificationModal() {
                             />
                             
                             <Typography
-                                size={isIOS ? 16 : 19}
+                                size={17}
                                 color={Colors.textLighter}
                                 style={{ textAlign: "center" }}
                                 fontFamily="urbanist-medium"

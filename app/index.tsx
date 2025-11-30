@@ -1,7 +1,8 @@
+import { spacingY } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import { Image } from 'expo-image';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 export default function index() {
     const { Colors } = useTheme();
@@ -13,6 +14,8 @@ export default function index() {
                 contentFit='contain'
                 source={require("../assets/svgs/logo.svg")}
             />
+
+            <ActivityIndicator size="large" color={Colors.accentDarker} />
         </View>
     )
 }
@@ -22,6 +25,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        // temp
+        gap: spacingY._30
     },
     logo: {
         width: 250,

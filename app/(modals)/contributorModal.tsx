@@ -5,11 +5,11 @@ import { spacingY } from "@/constants/theme";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
-export default function ContributionTransactionModal() {
+export default function ContributorModal() {
 	return (
 		<ModalWrapper>
 			<View style={styles.container}>
-				<ScreenHeader title="Contributor" leftElement={<BackButton />} style={{ marginBottom: spacingY._10 }} />
+				<ScreenHeader title="Contribution Details" leftElement={<BackButton />} style={{ marginBottom: spacingY._10 }} />
 
 				<ScrollView showsVerticalScrollIndicator={false}></ScrollView>
 			</View>

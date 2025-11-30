@@ -13,7 +13,6 @@
 // import Typography from './Typography'
 
 
-// const isIOS = Platform.OS === "ios";
 
 // export default function HomeCard() {
 //     const { user } = useAuth();
@@ -35,7 +34,7 @@
 
 //                 <View>
 //                     <View style={styles.totalBalanceRow}>
-//                         <Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={isIOS ? 17 : 19}>
+//                         <Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={18}>
 //                             All Time Raised
 //                         </Typography>
 //                         <Icons.DotsThreeOutlineIcon
@@ -45,7 +44,7 @@
 //                         />
 //                     </View>
 
-//                     <Typography color={BaseColors.neutral800} fontFamily="urbanist-bold" size={isIOS ? 31 : 33}>
+//                     <Typography color={BaseColors.neutral800} fontFamily="urbanist-bold" size={31}>
 //                         {loading ? "----" : formatCurrency(wallet?.allTimeBalance ?? 0, 2)}
 //                     </Typography>
 //                 </View>
@@ -61,13 +60,13 @@
 //                                     weight="bold"
 //                                 />
 //                             </View>
-//                             <Typography size={isIOS ? 16 : 17.5} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
+//                             <Typography size={16} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
 //                                 Amount Raised
 //                             </Typography>
 //                         </View>
 
 //                         <View style={{ alignSelf: "flex-start" }}>
-//                             <Typography size={isIOS ? 17 : 20} color={BaseColors.primaryLight} fontFamily="urbanist-bold">
+//                             <Typography size={18} color={BaseColors.primaryLight} fontFamily="urbanist-bold">
 //                                 {loading ? "---" : formatCurrency(wallet?.contributedEarning ?? 0, 0)}
 //                             </Typography>
 //                         </View>
@@ -83,13 +82,13 @@
 //                                     weight="bold"
 //                                 />
 //                             </View>
-//                             <Typography size={isIOS ? 16 : 18} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
+//                             <Typography size={17} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
 //                                 Referrals invited
 //                             </Typography>
 //                         </View>
 
 //                         <View style={{ alignSelf: "flex-end" }}>
-//                             <Typography size={isIOS ? 17 : 20} color={BaseColors.violet} fontFamily="urbanist-bold">
+//                             <Typography size={18} color={BaseColors.violet} fontFamily="urbanist-bold">
 //                                 {loading ? "---" : formatCurrency(wallet?.referralEarnings ?? 0, 0)}
 //                             </Typography>
 //                         </View>

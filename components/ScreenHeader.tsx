@@ -14,7 +14,7 @@ export default function ScreenHeader({ title, leftElement, style }: HeaderProps)
 
             {title && (
                 <Typography
-                    size={Platform.OS === "ios" ? 22 : 25.5}
+                    size={Platform.OS === "ios" ? 22 : 23.5}
                     fontFamily="urbanist-bold"
                     style={{
                         textAlign: "center",

@@ -20,11 +20,10 @@ import * as Burnt from "burnt";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Icons from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSharedValue } from "react-native-reanimated";
 
-const isIOS = Platform.OS === "ios"
 
 export default function createEditWishItemModal() {
     const router = useRouter();
@@ -241,14 +240,14 @@ export default function createEditWishItemModal() {
                     >
                         <Icons.TrashIcon
                             color={BaseColors.white}
-                            size={verticalScale(isIOS ? 24 : 26)}
+                            size={verticalScale(25)}
                             weight="bold"
                         />
                     </Button>
                 )}
 
                 <Button onPress={handleSubmit} loading={loading} disabled={loading} style={{ flex: 1 }}>
-                    <Typography size={isIOS ? 22 : 25} color={Colors.white} fontFamily="urbanist-semibold">
+                    <Typography size={23} color={Colors.white} fontFamily="urbanist-semibold">
                         {currentWishData?.id ? "Update" : "Create"} Wish
                     </Typography>
                 </Button>

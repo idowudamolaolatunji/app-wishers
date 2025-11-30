@@ -49,13 +49,6 @@ export const getProfileImage = function(file: any) {
     return require("@/assets/images/defaultAvatar.png");
 }
 
-export const getContributorImage = function(file: any) {
-    if(file && typeof file === "string") return file;
-    if(file && typeof file === "object") return file?.uri
-
-    return "https://res.cloudinary.com/dy3bwvkeb/image/upload/v1737549092/pngegg_yirbea.png";
-}
-
 export const getFilePath = function(file: any) {
     if(file && typeof file === "string") return file;
     if(file && typeof file === "object") return file?.uri

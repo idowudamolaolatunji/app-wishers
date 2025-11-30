@@ -2,11 +2,10 @@ import { BaseColors, radius, spacingX, spacingY } from '@/constants/theme'
 import { useTheme } from '@/hooks/useTheme'
 import { scale, verticalScale } from '@/utils/styling'
 import React from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import Loading from './Loading'
 import Typography from './Typography'
 
-const isIOS = Platform.OS === "ios";
 
 export default function DeleteItem({ text, loading=false, handleDelete, handleClose }: {
     text: string;
@@ -19,7 +18,7 @@ export default function DeleteItem({ text, loading=false, handleDelete, handleCl
   return (
     <View style={{ flex: 1, justifyContent: "space-between", }}>
         <View style={{ gap: spacingY._20, marginTop: spacingY._20 }}>
-            <Typography size={verticalScale(isIOS ? 19 : 21)} fontFamily="urbanist-medium" color={Colors.text} style={{ lineHeight: 25 }}>
+            <Typography size={verticalScale(20)} fontFamily="urbanist-medium" color={Colors.text} style={{ lineHeight: 25 }}>
                 {text}
             </Typography>
         </View>

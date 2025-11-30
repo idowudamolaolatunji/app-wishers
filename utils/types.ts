@@ -2,7 +2,6 @@
 // import { Firestore, Timestamp } from "firebase/firestore";
 // import { Icon } from "phosphor-react-native";
 
-import { Timestamp } from "firebase/firestore";
 import React, { ReactNode } from "react";
 import {
     // ActivityIndicator,
@@ -38,6 +37,14 @@ export type modalWrapperProps = {
     bgColor?: string
 }
 
+export type BoostingPlanType = {
+    id: number;
+    name: string;
+    price: number;
+    durationInHours: number;
+    durationInMs: number;
+}
+
 export type AppActionType = {
     accessTo: string;
     maxWishItemImages: number;
@@ -50,6 +57,7 @@ export type AppActionType = {
     minGoalAmount: number;
     shouldDisplayConfetti: boolean;
     feeDiscountInPercentage: number;
+    plans: BoostingPlanType[];
 }
 
 export type AppTransactionType = {
@@ -63,6 +71,7 @@ export type AppTransactionType = {
     uid?: string;
     refId?: string;
     paidAt?: Date,
+    type: "boosting" | "one-time"
 }
 
 export type AppContextType = {
@@ -213,6 +222,12 @@ export type ContributorItemProps = {
 };
 
 
+export type FeaturedWishlistProps = {
+    data: WishlistType[];
+    loading?: boolean;
+}
+
+
 export type ResponseType = {
     success: boolean;
     data?: any;
@@ -271,8 +286,8 @@ export type ContributorType = {
     wishId?: string;
     transactionId?: string;
     refId?: string;
-    createdAt: Date | Timestamp | string;
-    // createdAt: string;
+    // createdAt: Date | Timestamp | string;
+    createdAt: string;
 }
 
 export type WishItemType = {
@@ -308,4 +323,15 @@ export type WishlistType = {
     isCompleted?: boolean;
     wishes?: WishItemType[];
     link?: string;
+    currentboostExpiresAt?: string;
+    previousBoostingCount?: number;
+    lastBoostedAt?: string;
+}
+
+
+export type WishlistCreatorType = {
+    uid?: string;
+    email?: string;
+    name: string;
+    image?: string;
 }

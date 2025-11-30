@@ -1,4 +1,3 @@
-import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import FormInput from '@/components/FormInput';
 import ScreenWrapper from '@/components/ScreenWrapper';
@@ -63,7 +62,7 @@ export default function SignupScreen() {
     return (
         <ScreenWrapper>
             <View style={styles.container}>
-                <BackButton iconSize={28} />
+                {/* <BackButton iconSize={28} /> */}
 
                 <KeyboardAwareScrollView
                     bounces={false}
@@ -78,10 +77,10 @@ export default function SignupScreen() {
                     enableOnAndroid
                 >
                     <View style={{ gap: 5, marginTop: spacingY._15 }}>
-                        <Typography size={Platform.OS == "ios" ? 30 : 36} fontWeight="600" fontFamily="urbanist-bold">
+                        <Typography size={Platform.OS == "ios" ? 30 : 32} fontWeight="600" fontFamily="urbanist-bold">
                             Let's get you started!
                         </Typography>
-                        <Typography size={Platform.OS == "ios" ? 16 : 20} color={Colors.textLighter} fontFamily="urbanist-medium">
+                        <Typography size={Platform.OS == "ios" ? 16 : 17} color={Colors.textLighter} fontFamily="urbanist-medium">
                             Creat an account and start making wishes 🤑
                         </Typography>
                     </View>
@@ -120,11 +119,11 @@ export default function SignupScreen() {
                         />
 
                         <View style={{ alignSelf: "flex-start", flexDirection: "row", gap: 3, alignItems: "center" }}>
-                            <Typography size={Platform.OS == "ios" ? 14 : 16} color={Colors.text}>
+                            <Typography size={14} color={Colors.text}>
                                 By clicking "Sign Up", you are agreeing to our
                             </Typography>
                             <Pressable onPress={() => router.push("https://wishers.app/terms-of-use")}>
-                                <Typography size={Platform.OS == "ios" ? 14 : 16} color={Colors.text} style={{ textDecorationLine: "underline" }}>
+                                <Typography size={14} color={Colors.text} style={{ textDecorationLine: "underline" }}>
                                     terms of use
                                 </Typography>
                             </Pressable>
@@ -132,14 +131,14 @@ export default function SignupScreen() {
 
 
                         <Button onPress={handleSubmit} loading={loading}>
-                            <Typography size={Platform.OS == "ios" ? 20 : 25} color={Colors.background} fontFamily='urbanist-extrabold'>Sign Up</Typography>
+                            <Typography size={Platform.OS == "ios" ? 20 : 22} color={Colors.background} fontFamily='urbanist-extrabold'>Sign Up</Typography>
                         </Button>
                     </View>
 
                     <View style={styles.footerArea}>
-                        <Typography size={Platform.OS == "ios" ? 15 : 17}>Already have an account?</Typography>
+                        <Typography size={15}>Already have an account?</Typography>
                         <Pressable onPress={() => router.navigate("/(auth)/login")}>
-                            <Typography size={Platform.OS == "ios" ? 15 : 17} color={BaseColors.primary} fontFamily="urbanist-semibold">Login!</Typography>
+                            <Typography size={15} color={BaseColors.primary} fontFamily="urbanist-semibold">Login!</Typography>
                         </Pressable>
                     </View>
                 </KeyboardAwareScrollView>

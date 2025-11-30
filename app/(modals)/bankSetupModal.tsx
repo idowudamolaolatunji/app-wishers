@@ -12,10 +12,9 @@ import { handleFetchBanks, handleResolveAccount } from "@/services/bankServices"
 import { scale, verticalScale } from "@/utils/styling";
 import * as Burnt from "burnt";
 import React, { useEffect, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 
-const isIOS = Platform.OS === "ios";
 
 export type BankType = {
 	code: string;
@@ -119,7 +118,7 @@ export default function BankSetupModal() {
 						<Dropdown
 							style={[styles.dropdownContainer, { borderColor: BaseColors[ currentTheme == "dark" ? "neutral600" : "neutral300"], }]}
 							placeholderStyle={{ color: Colors.text, fontSize: 16 }}
-							selectedTextStyle={{ fontSize: verticalScale(isIOS ? 14 : 17), color: Colors.text }}
+							selectedTextStyle={{ fontSize: verticalScale(15), color: Colors.text }}
 							activeColor={BaseColors.neutral400}
 							inputSearchStyle={{ backgroundColor: BaseColors.neutral100, borderRadius: radius._10 }}
 							iconStyle={styles.dropdownIcon}
@@ -152,18 +151,19 @@ export default function BankSetupModal() {
 							onChangeText={(value) => setBankData({ ...bankData, accountNumber: value })}
 						/>
 						<View>
-							{(loading.tiny && !resolveFound.status) && (
+							{(loading.tiny && !resolveFound.status) ? (
 								<View style={{ alignSelf: "flex-start", flex: 1 }}>
 									<Loading size="small" color={BaseColors.primaryLight} />
 								</View>
-							)}
-							{(!loading.tiny && resolveFound.message && !resolveFound.status) && (
+							) : null}
+							
+							{(!loading.tiny && resolveFound.message && !resolveFound.status) ? (
 								<Typography color={Colors.rose} size={16} fontFamily="urbanist-medium">
 									{resolveFound.message}
 								</Typography>
-							)}
+							) : null}
 
-							{(resolveFound.status && !loading.tiny) && (
+							{(resolveFound.status && !loading.tiny) ? (
 								<View style={{ gap: 1 }}>
 									<Typography color={Colors.textLighter} size={16} fontFamily="urbanist-medium">
 										Found Account Name:
@@ -172,7 +172,7 @@ export default function BankSetupModal() {
 										{resolveFound.foundName}
 									</Typography>
 								</View>
-							)}
+							) : null}
 						</View>
 					</View>
 					
@@ -190,7 +190,7 @@ export default function BankSetupModal() {
 
 			<View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
 				<Button onPress={handleSubmit} loading={loading.main} disabled={loading.main} style={{ width: "100%" }}>
-					<Typography size={isIOS ? 22 : 25} color={Colors.white} fontFamily="urbanist-semibold">
+					<Typography size={23} color={Colors.white} fontFamily="urbanist-semibold">
 						Add Bank Details
 					</Typography>
 				</Button>

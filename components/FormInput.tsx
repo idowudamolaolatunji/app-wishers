@@ -4,9 +4,8 @@ import { verticalScale } from '@/utils/styling';
 import { InputProps } from '@/utils/types';
 import * as Icons from "phosphor-react-native";
 import React, { useState } from 'react';
-import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-const isIOS = Platform.OS === "ios";
 
 export default function FormInput(props: InputProps) {
     const { Colors, currentTheme } = useTheme();
@@ -54,7 +53,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        fontSize: verticalScale(isIOS ? 16 : 18),
+        fontSize: verticalScale(17),
         fontFamily: "urbanist-medium",
     }
 })

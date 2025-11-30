@@ -13,7 +13,7 @@ import { useRouter } from "expo-router";
 import { signOut } from "firebase/auth";
 import * as Icons from "phosphor-react-native";
 import React from "react";
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { spacingY } from '../../constants/theme';
 
@@ -38,7 +38,7 @@ export default function ProfileScreen() {
             bgColor: "#6366f1",
         },
         {
-            title: "Settings",
+            title: "Apperance & Security",
             icon: (
                 <Icons.GearSixIcon
                     size={26}
@@ -47,7 +47,7 @@ export default function ProfileScreen() {
                 />
             ),
             routeName: "/(modals)/settingsModal",
-            text: "Set up your account",
+            text: "Manage your account security & appreance",
             bgColor: "#059669",
         },
         {
@@ -77,7 +77,7 @@ export default function ProfileScreen() {
             bgColor: "#D97D55",
         },
         {
-            title: "FAQ",
+            title: "Frequently Asked",
             icon: (
                 <Icons.SealQuestionIcon
                     size={26}
@@ -89,18 +89,30 @@ export default function ProfileScreen() {
             text: "Add your bank details to recieve payments",
             bgColor: "#FEB21A",
         },
+        // {
+        //     title: "Delete Account",
+        //     icon: (
+        //         <Icons.TrashIcon
+        //             size={26}
+        //             color={Colors.text}
+        //             weight="fill"
+        //         />
+        //     ),
+        //     routeName: "/(modals)/deleteAccountModal",
+        //     bgColor: BaseColors.red,
+        //     text: "Delete account including account data"
+        // },
         {
-            title: "Delete Account",
+            title: "Logout",
             icon: (
-                <Icons.TrashIcon
+                <Icons.SignOutIcon
                     size={26}
                     color={Colors.text}
                     weight="fill"
                 />
             ),
-            routeName: "/(modals)/deleteAccountModal",
             bgColor: BaseColors.red,
-            text: "Delete account including account data"
+            text: "Logout of your account"
         },
     ];
 
@@ -123,6 +135,8 @@ export default function ProfileScreen() {
     }
 
     const handlePress = async function(item: AccountOptionType) {
+        if(item.title == "Logout") showLogoutAlert();
+
         if(item.routeName) {
             router.push(item?.routeName);
         }
@@ -151,10 +165,10 @@ export default function ProfileScreen() {
 
                         {/* name & email */}
                         <View style={styles.nameContainer}>
-                            <Typography size={Platform.OS === "ios" ? 24 : 26} fontFamily="urbanist-semibold" color={Colors.text}>
-                                {user?.name}
+                            <Typography size={24.5} fontFamily="urbanist-semibold" color={Colors.text}>
+                                {user?.name || "---"}
                             </Typography>
-                            <Typography size={Platform.OS === "ios" ? 15 : 18} color={Colors.textLighter}>
+                            <Typography size={16} color={Colors.textLighter}>
                                 {user?.email}
                             </Typography>
                         </View>
@@ -172,14 +186,14 @@ export default function ProfileScreen() {
                                     <View style={styles.flexCol}>
                                         <Typography
                                             fontFamily="urbanist-semibold"
-                                            size={Platform.OS === "ios" ? 17 : 20.5}
+                                            size={Platform.OS === "ios" ? 18 : 20}
                                             style={{ letterSpacing: 0.15 }}
                                         >
                                             {item.title}
                                         </Typography>
                                         <Typography
                                             fontFamily="urbanist-medium"
-                                            size={Platform.OS === "ios" ? 14 : 16}
+                                            size={15}
                                             style={{ color: Colors.textLighter }}
                                         >
                                             {item?.text}
@@ -195,16 +209,18 @@ export default function ProfileScreen() {
                     </View>
 
                     <View style={styles.footerArea}>
-                        <Pressable onPress={() => showLogoutAlert()} style={[styles.flexRow, { gap: spacingX._7 }]}>
+                        {/* <Pressable onPress={() => showLogoutAlert()} style={[styles.flexRow, { gap: spacingX._7 }]}>
                             <Icons.SignOutIcon
                                 size={24}
                                 color={BaseColors.red}
                                 weight="regular"
                             />
-                            <Typography size={Platform.OS == "ios" ? 20 : 22} color={BaseColors.red} fontFamily="urbanist-medium">Logout</Typography>
+                            <Typography size={20.5} color={BaseColors.red} fontFamily="urbanist-medium">Logout</Typography>
                         </Pressable>
+                        <Typography size={18} color={Colors.textLighter} fontFamily="urbanist-medium">Version 1.0.0</Typography> */}
 
-                        <Typography size={18} color={Colors.textLighter} fontFamily="urbanist-medium">Version 1.0.0</Typography>
+                        <Typography size={16} color={BaseColors.neutral400} fontFamily="urbanist-medium">Copyright &copy; Wishers</Typography>
+                        <Typography size={16} color={BaseColors.neutral400} fontFamily="urbanist-medium">Version 1.0.0</Typography>
                     </View>
                 </ScrollView>
             </View>
@@ -262,7 +278,7 @@ const styles = StyleSheet.create({
     },
     listItem: {
         // marginBottom: verticalScale(17),
-        marginBottom: verticalScale(26),
+        marginBottom: verticalScale(22),
     },
     accountOptions: {
         marginTop: spacingY._60,

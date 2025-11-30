@@ -3,10 +3,10 @@ import { scale, verticalScale } from "@/utils/styling";
 import { useRouter } from "expo-router";
 import * as Icons from "phosphor-react-native";
 import React from "react";
-import { Image, ImageBackground, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Image, ImageBackground, Pressable, StyleSheet, View } from 'react-native';
 import Typography from "./Typography";
 
-const isIOS = Platform.OS === "ios";
+
 export default function HomeReferral({ handleClose }: { handleClose: () => void }) {
     const router = useRouter();
 
@@ -34,7 +34,7 @@ export default function HomeReferral({ handleClose }: { handleClose: () => void 
                         // color={BaseColors.neutral600}
                         color="#642878"
                         fontFamily="urbanist-semibold"
-                        size={verticalScale(isIOS ? 18 : 20)}
+                        size={verticalScale(19)}
                     >
                         Get 1% of your friend's earnings
                     </Typography>
@@ -42,13 +42,13 @@ export default function HomeReferral({ handleClose }: { handleClose: () => void 
                         // color={BaseColors.neutral600}
                         color="#642878"
                         fontFamily="urbanist-semibold"
-                        size={verticalScale(isIOS ? 18 : 20)}
+                        size={verticalScale(19)}
                     >
                         when they use your referral code
                     </Typography>
                     
                     <Pressable style={styles.referralBtn} onPress={() => router.push("/(modals)/referralsModal")}>
-                        <Typography fontFamily="urbanist-bold" size={verticalScale(19)} color={BaseColors.white}>See how</Typography>
+                        <Typography fontFamily="urbanist-bold" size={verticalScale(19)} color={BaseColors.white}>See How</Typography>
                         <Icons.ArrowRightIcon
                             size={19}
                             color={BaseColors.white}
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
         borderCurve: "continuous",
         flexDirection: "row",
         gap: 4,
+        // width: verticalScale(100),
         justifyContent: "center",
         alignItems: "flex-start",
         // backgroundColor: BaseColors.primaryLight

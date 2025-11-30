@@ -8,10 +8,9 @@ import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
 import * as Icons from "phosphor-react-native"
 import React from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import Typography from './Typography'
 
-const isIOS = Platform.OS === "ios";
 
 export default function ImageUpload({
     file,
@@ -51,7 +50,7 @@ export default function ImageUpload({
                     <Icons.UploadSimpleIcon
                         color={BaseColors.neutral500}
                     />
-                    {placeholder && <Typography size={isIOS ? 15 : 17} color={BaseColors.neutral500} fontFamily='urbanist-medium'>{placeholder}</Typography>}
+                    {placeholder && <Typography size={15.5} color={BaseColors.neutral500} fontFamily='urbanist-medium'>{placeholder}</Typography>}
                 </TouchableOpacity>
             )}
 

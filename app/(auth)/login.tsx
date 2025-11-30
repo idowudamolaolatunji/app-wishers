@@ -1,4 +1,3 @@
-import BackButton from "@/components/BackButton";
 import Button from "@/components/Button";
 import FormInput from "@/components/FormInput";
 import ScreenWrapper from "@/components/ScreenWrapper";
@@ -92,7 +91,7 @@ export default function LoginScreen() {
 	return (
 		<ScreenWrapper>
 			<View style={styles.container}>
-                <BackButton iconSize={28} />
+                {/* <BackButton iconSize={28} customAction={() => router.push("/(auth)/welcome")} /> */}
 
                 <KeyboardAwareScrollView
                     bounces={false}
@@ -107,13 +106,13 @@ export default function LoginScreen() {
                     enableOnAndroid
                 >
                     <View style={{ gap: 5, marginTop: spacingY._15 }}>
-                        <Typography size={Platform.OS == "ios" ? 30 : 36} fontWeight="600" fontFamily="urbanist-bold">
+                        <Typography size={Platform.OS == "ios" ? 30 : 32} fontWeight="600" fontFamily="urbanist-bold">
                             Hi 👋🏿{formData.name ? ` ${formData.name?.split(" ")[0]}` : ""},
                         </Typography>
-                        <Typography size={Platform.OS == "ios" ? 30 : 36} fontWeight="600" fontFamily="urbanist-bold">
+                        <Typography size={Platform.OS == "ios" ? 30 : 32} fontWeight="600" fontFamily="urbanist-bold">
                             Welcome Back!
                         </Typography>
-                        <Typography size={Platform.OS == "ios" ? 16 : 20} color={Colors.textLighter} fontFamily="urbanist-medium">
+                        <Typography size={Platform.OS == "ios" ? 16 : 17.5} color={Colors.textLighter} fontFamily="urbanist-medium">
                             Login now & bring your wishes to life
                         </Typography>
                     </View>
@@ -138,20 +137,20 @@ export default function LoginScreen() {
                         />
 
                         <Pressable onPress={() => router.push("/forgot-password")} style={styles.forgotPassword}>
-                            <Typography size={Platform.OS == "ios" ? 14 : 16} color={Colors.textLighter} fontFamily="urbanist-medium">
+                            <Typography size={14} color={Colors.textLighter} fontFamily="urbanist-medium">
                                 Forgot Password
                             </Typography>
                         </Pressable>
 
                         <Button onPress={handleSubmit} loading={loading}>
-                            <Typography size={Platform.OS == "ios" ? 20 : 25} color={Colors.background} fontFamily="urbanist-extrabold">Login</Typography>
+                            <Typography size={21} color={Colors.background} fontFamily="urbanist-extrabold">Login</Typography>
                         </Button>
                     </View>
 
                     <View style={styles.footerArea}>
-                        <Typography size={Platform.OS == "ios" ? 15 : 17} color={Colors.text} fontFamily="urbanist-medium">Don't have an account?</Typography>
+                        <Typography size={15} color={Colors.text} fontFamily="urbanist-medium">Don't have an account?</Typography>
                         <Pressable onPress={() => router.navigate("/(auth)/sign-up")}>
-                            <Typography size={Platform.OS == "ios" ? 15 : 17} color={BaseColors.primary} fontFamily="urbanist-semibold">Register!</Typography>
+                            <Typography size={15} color={BaseColors.primary} fontFamily="urbanist-semibold">Register!</Typography>
                         </Pressable>
                     </View>
                 </KeyboardAwareScrollView>

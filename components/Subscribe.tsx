@@ -9,11 +9,10 @@ import LottieView from "lottie-react-native";
 import * as Icons from "phosphor-react-native";
 import { CreditCardIcon } from "phosphor-react-native";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Loading from "./Loading";
 import ReusableCheckOption from "./ReusableCheckOption";
 
-const isIOS = Platform.OS === "ios"
 
 export default function Subscribe({ loading, handlePay }: { loading: boolean; handlePay: () => void; }) {
     const { actions } = useAppContext();
@@ -33,11 +32,6 @@ export default function Subscribe({ loading, handlePay }: { loading: boolean; ha
                 borderRadius: 100,
                 backgroundColor: currentTheme == "dark" ? "#dcfce71a" : BaseColors.accentLight,
             }}>
-                {/* <Image
-                    source={require("@/assets/images/icon-gift.png")}
-                    style={{ width: verticalScale(60), height: verticalScale(60), }}
-                /> */}
-                
                 <LottieView
                     autoPlay
                     loop
@@ -47,8 +41,8 @@ export default function Subscribe({ loading, handlePay }: { loading: boolean; ha
             </View>
 
             <View style={styles.headings}>
-                <Typography size={verticalScale(isIOS ? 27 : 30)} fontFamily="urbanist-bold">Welcome To Wishers</Typography>
-                <Typography style={{ textAlign: "center" }} size={isIOS ? 17 : 19} color={Colors.textLighter}>Unlock unlimited wishlists and start receiving contributions / gifts</Typography>
+                <Typography size={verticalScale(27.5)} fontFamily="urbanist-bold">Welcome To Wishers</Typography>
+                <Typography style={{ textAlign: "center" }} size={18} color={Colors.textLighter}>Unlock unlimited wishlists and start receiving contributions / gifts</Typography>
             </View>
 
             <View style={styles.listContainer}>
@@ -81,10 +75,10 @@ export default function Subscribe({ loading, handlePay }: { loading: boolean; ha
                         <React.Fragment>
                             <Typography>{discountPercentage}% off</Typography>
                             <Typography style={{ textDecorationLine: "line-through" }} color={Colors.neutral400} size={20} fontFamily="urbanist-semibold">{formatCurrency(actions?.oneTimeFee ?? 0)}</Typography>
-                            <Typography color={BaseColors.primaryLight} fontFamily="urbanist-bold" size={verticalScale(isIOS ? 30 : 33)}>{formatCurrency(checkoutAmount)}</Typography>
+                            <Typography color={BaseColors.primaryLight} fontFamily="urbanist-bold" size={verticalScale(31)}>{formatCurrency(checkoutAmount)}</Typography>
                         </React.Fragment>
                     ) : (
-                        <Typography color={BaseColors.primaryLight} fontFamily="urbanist-bold" size={verticalScale(isIOS ? 30 : 33)}>{formatCurrency(checkoutAmount)}</Typography>
+                        <Typography color={BaseColors.primaryLight} fontFamily="urbanist-bold" size={verticalScale(31)}>{formatCurrency(checkoutAmount)}</Typography>
                     )}
                 </View>
                 <Typography color={Colors.textLighter} size={16}>Pay once • No monthly fees</Typography>
@@ -132,7 +126,7 @@ const styles = StyleSheet.create({
         padding: spacingY._10,
         borderRadius: radius._10,
         borderColor: BaseColors.primaryLight,
-        backgroundColor: "hsla(141, 84%, 93%, 0.10)",
+        backgroundColor: "#defce91a",
         borderWidth: 1,
         borderStyle: "dashed",
     }

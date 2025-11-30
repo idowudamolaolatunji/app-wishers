@@ -8,7 +8,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function BackButton({ style, iconSize=26, iconType="back", customAction }: BackButtonProps) {
     const router = useRouter();
-    const hasCustomAction = iconType === "cancel" && customAction;
+    const hasCustomAction = customAction;
 
     const handlePress = function() {
         if(hasCustomAction) {

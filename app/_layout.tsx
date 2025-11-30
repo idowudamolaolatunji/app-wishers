@@ -1,14 +1,26 @@
 import { AppProvider } from "@/contexts/AppContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { NetworkProvider } from "@/contexts/providers/NetworkProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ErrorBoundary } from "react-error-boundary";
+import { View } from 'react-native';
 import { PaystackProvider } from "react-native-paystack-webview";
 import 'react-native-reanimated';
+import ErrorFallback from "./error";
 
+import { verticalScale } from "@/utils/styling";
+// import { useNavigationMode } from 'react-native-navigation-mode';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+	// const { navigationMode } = useNavigationMode();
+	const [sysNavigationHeight, setSysNavigationBarHeight] = useState(0)
+
 	const [loaded] = useFonts({
 		"raleway": require("../assets/fonts/Raleway-regular.ttf"),
 		"urbanist-light": require("../assets/fonts/urbanist/Urbanist-Light.ttf"),
@@ -25,42 +37,65 @@ export default function RootLayout() {
 		}
 	}, [loaded]);
 
-	return (
-		<AppProvider>
-			<AuthProvider>
-				<ThemeProvider>
-					<PaystackProvider
-						debug
-						currency="NGN"
-						defaultChannels={[
-							"bank_transfer",
-							"card",
-							"ussd",
-						]}
-						publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY!}
-					>
-						<Stack screenOptions={{ headerShown: false }}>
-							<Stack.Screen name="index" />
-							<Stack.Screen name="(modals)/profileEditModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/settingsModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/bankSetupModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/legalPoliciesModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/faqModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/referralsModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/wishlistDetailModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/wishItemDetailModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/transactionModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/createEditWishlistModal" options={{ presentation: "modal" }} />
-							<Stack.Screen name="(modals)/createEditWishItemModal" options={{ presentation: "modal" }} />
+	// useEffect(function() {
+	// 	if(Platform.OS == "android" && navigationMode?.isGestureNavigation == false) {
+	// 		setSysNavigationBarHeight(navigationMode.navigationBarHeight || 0);
+	// 	}
+	// }, [navigationMode?.isGestureNavigation]);
 
-							<Stack.Screen name="(modals)/notificationModal" options={{ presentation: "formSheet" }} />
-							<Stack.Screen name="(modals)/withdrawalModal" options={{ presentation: "formSheet" }} />
-							<Stack.Screen name="(modals)/deleteAccountModal" options={{ presentation: "formSheet" }} />
-							<Stack.Screen name="(modals)/passwordChangeModal" options={{ presentation: "formSheet" }} />
-						</Stack>
-					</PaystackProvider>
-				</ThemeProvider>
-			</AuthProvider>
-		</AppProvider>
+	if (!loaded) {
+		return null; // render nothing while fonts are loading
+	}
+
+	return (
+		<ErrorBoundary
+			FallbackComponent={ErrorFallback}
+			onError={(error, info) => console.error("Global error caught:", error, info)}
+		>
+			<NetworkProvider>
+				<AppProvider>
+					<AuthProvider>
+						<ThemeProvider>
+							<PaystackProvider
+								debug
+								currency="NGN"
+								defaultChannels={[
+									"bank_transfer",
+									"card",
+									"ussd",
+								]}
+								publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY!}
+							>
+								<View style={{ flex: 1, paddingBottom: verticalScale(sysNavigationHeight), }}>
+								<Stack screenOptions={{ headerShown: false }}>
+									<Stack.Screen name="index" />
+									<Stack.Screen name="(modals)/profileEditModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/settingsModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/bankSetupModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/legalPoliciesModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/faqModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/referralsModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/wishlistDetailModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/wishItemDetailModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/transactionModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/contributorModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/createEditWishlistModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/createEditWishItemModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/seeMoreFeaturedWishlistsModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/boostWishlistModal" options={{ presentation: "modal" }} />
+									<Stack.Screen name="(modals)/boostDetailsModal" options={{ presentation: "modal" }} />
+
+									<Stack.Screen name="(modals)/notificationModal" options={{ presentation: "formSheet" }} />
+									<Stack.Screen name="(modals)/withdrawalModal" options={{ presentation: "formSheet" }} />
+									<Stack.Screen name="(modals)/deleteAccountModal" options={{ presentation: "formSheet" }} />
+									<Stack.Screen name="(modals)/passwordChangeModal" options={{ presentation: "formSheet" }} />
+								</Stack>
+								</View>
+							</PaystackProvider>
+						</ThemeProvider>
+					</AuthProvider>
+				</AppProvider>
+			</NetworkProvider>
+		</ErrorBoundary>
 	);
 }

@@ -31,7 +31,6 @@ import { Platform, Pressable, RefreshControl, ScrollView, Share, StyleSheet, Tou
 import ModalView from "react-native-modal";
 import Animated, { FadeInDown, useSharedValue } from "react-native-reanimated";
 
-const isIOS = Platform.OS === "ios";
 
 export default function wishlistDetailModal() {
     const params: { id?: string, slug: string, isnew?: string } = useLocalSearchParams();
@@ -72,7 +71,7 @@ export default function wishlistDetailModal() {
         try {
             await Share.share({
                 // message: `Check my Wishlist: \n\n${wishlist?.title} \n\n${wishlist.link}`,
-                message: `Abeg 🥹 help me acheive my wishlist, ${wishlist?.title} \n\n${wishlist.link}`,
+                message: `help me acheive my ${wishlist?.title} \n\n${wishlist.link}`,
                 url: `${wishlist.link}`, // iOS only
                 title: 'Share Wishlist', // Android only
             });
@@ -112,6 +111,46 @@ export default function wishlistDetailModal() {
                 }
             })
         }
+    }
+
+    // BOOSTING ACTION TO GO TO THE BOSSTING PAGE WITH SOME PARAMS
+    const handleGotoBoostingModal = function() {
+        if(wishlist?.wishes && wishlist?.wishes?.length < 1) {
+            return Burnt.toast({ haptic: "error", title: "You cannot boost a wishlist that doesn't have a wish" })
+        }
+        setShowOptionsMenu(false);
+
+        router.push({
+            pathname: "/(modals)/boostWishlistModal",
+            params: {
+                id: wishlist?.id,
+                title: wishlist?.title,
+                image: wishlist?.image,
+                totalAmountReceived: wishlist?.totalAmountReceived,
+                totalGoalAmount: wishlist?.totalGoalAmount,
+                totalContributors: wishlist?.totalContributors,
+            }
+        })
+    }
+
+    // BOOSTING DETAILS PAGE WITH SOME PARAMS
+    const handleViewBoostingDetails = function() {
+        setShowOptionsMenu(false);
+
+        router.push({
+            pathname: "/(modals)/boostDetailsModal",
+            params: {
+                id: wishlist?.id,
+                title: wishlist?.title,
+                image: wishlist?.image,
+                totalAmountReceived: wishlist?.totalAmountReceived,
+                totalGoalAmount: wishlist?.totalGoalAmount,
+                totalContributors: wishlist?.totalContributors,
+                currentboostExpiresAt: wishlist?.currentboostExpiresAt,
+                lastBoostedAt: wishlist?.lastBoostedAt,
+                previousBoostingCount: wishlist?.previousBoostingCount,
+            }
+        })
     }
 
     const handleDeleteAction = function() {
@@ -206,17 +245,25 @@ export default function wishlistDetailModal() {
                                 borderRadius: radius._6,
                             }}
                         >
-                            <TouchableOpacity onPress={handleEditAction} style={{ paddingHorizontal: spacingY._20, paddingVertical: spacingY._10, borderBottomWidth: 1, borderBottomColor: BaseColors.neutral600 }}>
-                                <Typography fontFamily="urbanist-semibold" size={isIOS ? 18 : 20}>Edit</Typography>
+                            <TouchableOpacity onPress={handleEditAction} style={{ paddingHorizontal: spacingY._17, paddingVertical: spacingY._10, borderBottomWidth: 1, borderBottomColor: BaseColors.neutral600, flexDirection: "row", gap: spacingX._5, alignItems: "center", justifyContent: "flex-start" }}>
+                                <Icons.PencilLineIcon color={Colors.text} weight="bold" size={verticalScale(20)} />
+                                <Typography fontFamily="urbanist-semibold" size={19}>Edit</Typography>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => {}} style={{ paddingHorizontal: spacingY._20, paddingVertical: spacingY._10, borderBottomWidth: 1, borderBottomColor: BaseColors.neutral600, flexDirection: "row", gap: spacingX._5, alignItems: "center" }}>
-                                <Typography fontFamily="urbanist-semibold" size={isIOS ? 18 : 20}>Boost</Typography>
-                                <Icons.RocketLaunchIcon color={Colors.text} weight="bold" size={verticalScale(24)} />
-                            </TouchableOpacity>
+                            {!wishlist?.isCompleted && (
+                                <React.Fragment>
+                                    {(wishlist?.currentboostExpiresAt! <= new Date().toISOString()) ? (
+                                        <TouchableOpacity onPress={handleGotoBoostingModal} style={{ paddingHorizontal: spacingY._17, paddingVertical: spacingY._10, borderBottomWidth: 1, borderBottomColor: BaseColors.neutral600, flexDirection: "row", gap: spacingX._5, alignItems: "center", justifyContent: "flex-start" }}>
+                                            <Icons.RocketLaunchIcon color={Colors.text} weight="bold" size={verticalScale(24)} />
+                                            <Typography fontFamily="urbanist-semibold" size={19}>Boost</Typography>
+                                        </TouchableOpacity>
+                                    ) : null}
+                                </React.Fragment>
+                            )}
 
-                            <TouchableOpacity onPress={handleDeleteAction} style={{ paddingHorizontal: spacingY._20, paddingVertical: spacingY._10 }}>
-                                <Typography fontFamily="urbanist-semibold" size={isIOS ? 18 : 20}>Delete</Typography>
+                            <TouchableOpacity onPress={handleDeleteAction} style={{ paddingHorizontal: spacingY._17, paddingVertical: spacingY._10, flexDirection: "row", gap: spacingX._5, alignItems: "center", justifyContent: "flex-start" }}>
+                                <Icons.TrashIcon color={BaseColors.rose} weight="bold" size={verticalScale(20)} />
+                                <Typography fontFamily="urbanist-semibold" size={19} color={BaseColors.rose}>Delete</Typography>
                             </TouchableOpacity>
                         </View>
                     </React.Fragment>
@@ -243,7 +290,7 @@ export default function wishlistDetailModal() {
                             contentFit="cover"
                         />
                         <Typography
-                            size={isIOS ? 16 : 18}
+                            size={17}
                             color={Colors.textLighter}
                             style={{ textAlign: "center", marginTop: spacingY._15 }}
                         >
@@ -263,7 +310,7 @@ export default function wishlistDetailModal() {
                                 style={{ flex: 1, justifyContent: 'flex-end', padding: spacingY._20, gap: spacingY._5 }}
                             >
                                 <Typography
-                                    size={isIOS ? 21 : 24}
+                                    size={22}
                                     fontFamily="urbanist-bold"
                                     color={BaseColors.white}
                                 >
@@ -271,7 +318,7 @@ export default function wishlistDetailModal() {
                                 </Typography>
 
                                 {wishlist?.description && (
-                                    <Typography color={Colors.neutral300} textProps={{ numberOfLines: 2 }}>
+                                    <Typography color={Colors.neutral400} textProps={{ numberOfLines: 2 }}>
                                         {wishlist?.description ?? "--"}
                                     </Typography>
                                 )}
@@ -283,17 +330,17 @@ export default function wishlistDetailModal() {
 
                             <View style={[styles.progressCard, { backgroundColor: Colors.cardBackground }]}>
                                 <View style={styles.flexRow}>
-                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 17 : 19)} color={Colors.text}>
+                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(18)} color={Colors.text}>
                                         Overall Progress
                                     </Typography>
-                                    <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 18 : 20.5)} color={BaseColors.primaryLight}>
+                                    <Typography fontFamily="urbanist-bold" size={verticalScale(19.5)} color={BaseColors.primaryLight}>
                                         {wishlist?.totalAmountReceived ? `${formatShortCurrency(wishlist?.totalAmountReceived ?? 0)} / ${formatShortCurrency(wishlist?.totalGoalAmount ?? 0)}` : formatCurrency(0)}
                                     </Typography>
                                 </View>
 
                                 <Rangebar value={percentage} />
                                 
-                                <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 19)} color={Colors.neutral500}>{percentage}% funded by {wishlist?.totalContributors ?? 0} contributor{wishlist?.totalContributors === 1 ? "" : "s"}</Typography>
+                                <Typography fontFamily="urbanist-medium" size={verticalScale(18)} color={Colors.neutral500}>{percentage}% funded by {wishlist?.totalContributors ?? 0} giver{wishlist?.totalContributors === 1 ? "" : "s"}</Typography>
                             </View>
 
                             {(wishlist?.totalWishItems && wishlist?.totalWishItems > 0) ? (
@@ -303,7 +350,7 @@ export default function wishlistDetailModal() {
                                             <Loading color={BaseColors.neutral700} />
                                         ) : (
                                             <React.Fragment>
-                                                <Typography size={isIOS ? 20 : 22} color={BaseColors.neutral800} fontFamily="urbanist-semibold">
+                                                <Typography size={20.5} color={BaseColors.neutral800} fontFamily="urbanist-semibold">
                                                     Share Link
                                                 </Typography>
             
@@ -321,6 +368,18 @@ export default function wishlistDetailModal() {
                                     >
                                         <Icons.QrCodeIcon color={Colors.text} weight="bold" size={verticalScale(24)} />
                                     </Button>
+                                    
+                                    {(wishlist?.currentboostExpiresAt! <= new Date().toISOString()) && (
+                                        <Button
+                                            onPress={handleGotoBoostingModal}
+                                            style={{
+                                                backgroundColor: BaseColors.brown,
+                                                paddingHorizontal: spacingX._15,
+                                            }}
+                                        >
+                                            <Icons.RocketLaunchIcon color={BaseColors.white} weight="bold" size={verticalScale(24)} />
+                                        </Button>
+                                    )}
                                 </View>
                             ) : (
                                 null
@@ -334,16 +393,26 @@ export default function wishlistDetailModal() {
                                     icon={<Icons.GiftIcon size={24} weight="bold" color={BaseColors.neutral800} />}
                                 />
                                 <WishInsight
-                                    title="Contributors"
+                                    title="Givers"
                                     value={`${wishlist?.totalContributors ?? 0}`}
                                     icon={<Icons.UsersThreeIcon size={24} weight="bold" color={BaseColors.white} />}
                                     iconbgColor={"#CFADC1"}
                                 />
                             </View>
 
+                            {(wishlist?.currentboostExpiresAt! >= new Date().toISOString()) ? (
+                                <Button onPress={handleViewBoostingDetails} style={{ paddingHorizontal: spacingX._15, alignItems: "center", justifyContent: "center", backgroundColor: Colors.cardBackground }}>
+                                    <Typography size={20.5} color={BaseColors.brown} fontFamily="urbanist-semibold">
+                                        View Boosting Details
+                                    </Typography>
+                                </Button>
+                            ) : (
+                                null
+                            )}
+
                             {/* wish items top */}
                             <View style={[styles.flexRow, { marginVertical: spacingY._7, marginTop: spacingY._15, }]}>
-                                <Typography size={isIOS ? 20 : 23} fontFamily="urbanist-semibold">Your Wishes</Typography>
+                                <Typography size={21} fontFamily="urbanist-semibold">Your Wishes</Typography>
         
                                 <TouchableOpacity
                                     activeOpacity={0.75}
@@ -370,7 +439,7 @@ export default function wishlistDetailModal() {
                                 ) : (
                                     <React.Fragment>
                                         <Typography
-                                            size={isIOS ? 15 : 17}
+                                            size={15.5}
                                             color={BaseColors.neutral600}
                                             style={{ textAlign: "center", marginTop: spacingY._25 }}
                                         >
@@ -397,11 +466,11 @@ export default function wishlistDetailModal() {
                     <QrCode link={wishlist?.link!} />
                     <View style={{ alignItems: "center", flexDirection: "row", gap: spacingX._15, }}>
                         <Pressable onPress={() => setShowQr(false)} style={styles.closeButton}>
-                            <Icons.XIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                            <Icons.XIcon size={verticalScale(23.5)} color={BaseColors.white} weight="bold" />
                         </Pressable>
                         <Pressable onPress={handleShare} style={styles.closeButton}>
                             {loading.share ? <Loading color={BaseColors.white} /> : 
-                                <Icons.ShareFatIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                                <Icons.ShareFatIcon size={verticalScale(23.5)} color={BaseColors.white} weight="bold" />
                             }
                         </Pressable>
                     </View>
@@ -453,17 +522,17 @@ function WishItem({ item, index }: { item: WishItemType, index: number }) {
                 </View>
 
                 <View style={styles.itemDetails}>
-                    <Typography size={isIOS ? 20 : 23} fontFamily="urbanist-bold">
+                    <Typography size={21} fontFamily="urbanist-bold">
                         {item?.title}
                     </Typography>
 
-                    <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 19 : 22)} color={BaseColors.primaryLight}>
+                    <Typography fontFamily="urbanist-bold" size={verticalScale(19)} color={BaseColors.primaryLight}>
                         {formatCurrency(item?.goalAmount ?? 0)}
                     </Typography>
                     <Rangebar value={percentage} height={5} />
 
                     <View style={styles.flexRow}>
-                        <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 17 : 19)} color={Colors.textLighter}>
+                        <Typography fontFamily="urbanist-semibold" size={verticalScale(17.5)} color={Colors.textLighter}>
                             {item?.isCompleted ? "Completed 🎉" : (
                                 <>{percentage ?? 0}% Funded</>
                             )}
@@ -471,8 +540,8 @@ function WishItem({ item, index }: { item: WishItemType, index: number }) {
 
                         <View style={{ flexDirection: "row", gap: 3 }}>
                             <Icons.UsersThreeIcon size={verticalScale(20)} color={Colors.textLighter} />
-                            <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 17 : 19)} color={Colors.textLighter}>
-                                {item?.contributorCount} Contributor{item?.contributorCount === 1 ? "" : "s"}
+                            <Typography fontFamily="urbanist-semibold" size={verticalScale(17.5)} color={Colors.textLighter}>
+                                {item?.contributorCount} Giver{item?.contributorCount === 1 ? "" : "s"}
                             </Typography>
                         </View>
                     </View>

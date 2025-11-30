@@ -18,7 +18,7 @@ export default function ModalWrapper({ style, children, bgColor }: modalWrapperP
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: isIOS ? spacingY._15 : 40,
+        paddingTop: isIOS ? spacingY._15 : 35,
         // paddingBottom: isIOS ? spacingY._20 : spacingY._10
         paddingBottom: isIOS ? spacingY._15 : spacingY._5
     }

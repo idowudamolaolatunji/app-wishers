@@ -1,4 +1,5 @@
 import ContributionList from "@/components/ContributionList";
+import FeaturedWishlists from "@/components/FeaturedWishlists";
 import HomeReferral from "@/components/HomeReferral";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { BaseColors, radius, spacingX, spacingY } from '@/constants/theme';
@@ -6,17 +7,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import useFetchData from "@/hooks/useFetchData";
 import { useTheme } from "@/hooks/useTheme";
 import { formatCurrency } from "@/utils/helpers";
-import { ContributorType, WalletType } from "@/utils/types";
+import { ContributorType, WalletType, WishlistType } from "@/utils/types";
 import { useRouter } from "expo-router";
 import { limit, orderBy, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import { useState } from "react";
-import { ImageBackground, Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown } from "react-native-reanimated";
 import Typography from '../../components/Typography';
 import { scale, verticalScale } from '../../utils/styling';
 
-const isIOS = Platform.OS === "ios";
 
 export default function HomeScreen() {
 	const router = useRouter();
@@ -33,13 +33,24 @@ export default function HomeScreen() {
 	const wallet = data?.[0];
 
 	const { data: contributors, error, loading: contributorLoading, refetch: refetchContributor } = useFetchData<ContributorType>(
-		"contributors", (user?.uid) ? [where("uid", "==", user?.uid), orderBy("createdAt", "desc"), limit(10)] : [],
+		"contributors", (user?.uid) ? [where("uid", "==", user?.uid), orderBy("createdAt", "desc"), limit(30)] : [],
+	);
+
+	const { data: featuredWishlists, loading: featuredLoading, refetch: refetchFeatured } = useFetchData<WishlistType>(
+		"wishlists", [
+			where("currentboostExpiresAt", ">=", new Date().toISOString()), // active boosts
+			orderBy("totalAmountReceived", "desc"), // highest paying first
+			orderBy("totalContributors", "desc"), // highestes contributors next
+			orderBy("previousBoostingCount", "desc"), // most recent boost next
+			limit(25)
+		],
 	);
 
 	const handleRefresh = function() {
 		setRefreshing(true);
 		refetchWallet();
 		refetchContributor();
+		refetchFeatured();
     	setRefreshing(false);
 	}
 
@@ -51,8 +62,8 @@ export default function HomeScreen() {
 					<Animated.View style={{ gap: 4 }}
 						entering={FadeInDown.duration(500)}
 					>
-						<Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium" color={Colors.textLighter}>Hello,</Typography>
-						<Typography size={isIOS ? 20 : 24} fontFamily="urbanist-semibold">{displayName}</Typography>
+						<Typography size={17} fontFamily="urbanist-medium" color={Colors.textLighter}>Hello,</Typography>
+						<Typography size={21} fontFamily="urbanist-semibold">{displayName || "---"}</Typography>
 					</Animated.View>
 
 					<TouchableOpacity style={[styles.headerIcn, { backgroundColor: Colors.background300 }]} onPress={() => router.push("/(modals)/notificationModal")}>
@@ -83,7 +94,7 @@ export default function HomeScreen() {
 
 							<View>
 								<View style={styles.totalBalanceRow}>
-									<Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={isIOS ? 17 : 19}>
+									<Typography color={BaseColors[currentTheme == "dark" ? "neutral600" : "neutral700"]} fontFamily='urbanist-bold' size={18}>
 										All-Time Accumulated
 									</Typography>
 									<Icons.DotsThreeOutlineIcon
@@ -93,7 +104,7 @@ export default function HomeScreen() {
 									/>
 								</View>
 
-								<Typography color={BaseColors.neutral800} fontFamily="urbanist-bold" size={isIOS ? 31 : 33}>
+								<Typography color={BaseColors.neutral800} fontFamily="urbanist-bold" size={31.5}>
 									{walletLoading ? "----" : formatCurrency(wallet?.allTimeBalance ?? 0, 2)}
 								</Typography>
 							</View>
@@ -109,13 +120,13 @@ export default function HomeScreen() {
 												weight="bold"
 											/>
 										</View>
-										<Typography size={isIOS ? 16 : 17.5} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
+										<Typography size={16} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
 											Total Raised
 										</Typography>
 									</View>
 
 									<View style={{ alignSelf: "flex-start" }}>
-										<Typography size={isIOS ? 17 : 20} color={BaseColors.primaryLight} fontFamily="urbanist-bold">
+										<Typography size={18} color={BaseColors.primaryLight} fontFamily="urbanist-bold">
 											{walletLoading ? "---" : formatCurrency(wallet?.contributedEarning ?? 0, 0)}
 										</Typography>
 									</View>
@@ -131,13 +142,13 @@ export default function HomeScreen() {
 												weight="bold"
 											/>
 										</View>
-										<Typography size={isIOS ? 16 : 18} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
+										<Typography size={17} color={BaseColors.neutral700} fontFamily="urbanist-semibold">
 											Referrals
 										</Typography>
 									</View>
 
 									<View style={{ alignSelf: "flex-end" }}>
-										<Typography size={isIOS ? 17 : 20} color={BaseColors.lemon} fontFamily="urbanist-bold">
+										<Typography size={18} color={BaseColors.lemon} fontFamily="urbanist-bold">
 											{walletLoading ? "---" : formatCurrency(wallet?.referralEarnings ?? 0, 0)}
 										</Typography>
 									</View>
@@ -150,10 +161,17 @@ export default function HomeScreen() {
 					{/* REFERRAL */}
 					{showBanner && <HomeReferral handleClose={() => setShowBanner(false)} />}
 
+					{/* FEATURED WISHLISTS */}
+					{(featuredLoading || featuredWishlists?.length > 0) && (
+						<FeaturedWishlists
+							data={featuredWishlists as WishlistType[]}
+							loading={featuredLoading}
+						/>
+					)}
 
 					{(!contributorLoading && error) && (
 						<Typography
-							size={isIOS ? 15 : 17}
+							size={15.5}
 							color={Colors.textLighter}
 							style={{ textAlign: "center", marginTop: spacingY._15 }}
 						>
@@ -163,10 +181,10 @@ export default function HomeScreen() {
 
 					{!error && (
 						<ContributionList
-							title="Recent Contributions"
+							title="Recent Givers"
 							data={contributors as ContributorType[]}
 							loading={contributorLoading}
-							emptyListMessage="No contribution yet!"
+							emptyListMessage="No givers yet!"
 						/>
 					)}
 				</ScrollView>
@@ -203,8 +221,6 @@ const styles = StyleSheet.create({
 		// height: scale(210),
 		height: scale(185),
 		width: "100%",
-
-		// temps
 		borderRadius: radius._20,
 		overflow: "hidden",
 	},

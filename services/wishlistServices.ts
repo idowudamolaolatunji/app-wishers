@@ -31,6 +31,7 @@ export const createOrUpdateWishlist = async function (wishlistData: Partial<Wish
             wishlistToSave.link = `https://pay-wishers.vercel.app/w/${slug}`;
             wishlistToSave.wishes = [];
             wishlistToSave.created = new Date();
+            wishlistToSave.previousBoostingCount = 0;
         }
 
         const wishlistRef = wishlistData?.id ? doc(firestore, "wishlists", wishlistData?.id) : doc(collection(firestore, "wishlists"));
@@ -123,8 +124,12 @@ export const createOrUpdateWishItem = async function (wishData: Partial<WishItem
                 wish.id === wishToSave.id ? { ...wish, ...updatedWishitem } : wish
             ) || [];
 
+            const prevWish = await getDoc(wishRef)
+            // console.log("Prev", prevWish)
+            const newTotalGoalAmount = (wishlistData?.totalGoalAmount || 0) - (prevWish.data()?.goalAmount || 0) + (wishToSave?.goalAmount || 0);
             await updateDoc(wishlistRef, {
-                wishes: updatedWishes
+                wishes: updatedWishes,
+                totalGoalAmount: newTotalGoalAmount
             });
         }
 

@@ -26,12 +26,11 @@ import { orderBy, where } from "firebase/firestore";
 import LottieView from "lottie-react-native";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
-import { Platform, Pressable, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import ModalView from "react-native-modal";
 import { usePaystack } from "react-native-paystack-webview";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
-const isIOS = Platform.OS === "ios";
 
 export default function WishlistScreen() {
 	const router = useRouter();
@@ -164,7 +163,7 @@ export default function WishlistScreen() {
                                 contentFit="cover"
                             />
                             <Typography
-                                size={isIOS ? 16 : 18}
+                                size={17}
                                 color={Colors.textLighter}
                                 style={{ textAlign: "center", marginTop: spacingY._15 }}
                             >
@@ -204,7 +203,7 @@ export default function WishlistScreen() {
                                 contentFit="cover"
                             />
                             <Typography
-                                size={isIOS ? 15 : 17}
+                                size={15.5}
                                 color={Colors.textLighter}
                                 style={{ textAlign: "center", marginTop: spacingY._15 }}
                             >
@@ -257,7 +256,7 @@ export default function WishlistScreen() {
                     }
                     style={styles.closeButton}
                 >
-                    <Icons.XIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                    <Icons.XIcon size={verticalScale(23.5)} color={BaseColors.white} weight="bold" />
                 </Pressable>
             </ModalView>
         </ScreenWrapper>
@@ -287,7 +286,7 @@ function WishListComponent({ item, index, handleOpenDetails }: {
 
                 <View style={styles.cardDetails}>
                     <Typography
-                        size={isIOS ? 20 : 23}
+                        size={22}
                         fontFamily="urbanist-bold"
                     >
                         {item?.title}
@@ -299,24 +298,24 @@ function WishListComponent({ item, index, handleOpenDetails }: {
 
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View style={{ flexDirection: "row", gap: 3 }}>
-                            <Icons.UsersThreeIcon size={22} color={Colors.textLighter} />
-                            <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 20)} color={Colors.textLighter}>{item.totalContributors} Contributor{item?.totalContributors === 1 ? "" : "s"}</Typography>
+                            <Icons.UsersThreeIcon size={21} color={Colors.textLighter} />
+                            <Typography fontFamily="urbanist-medium" size={verticalScale(17)} color={Colors.textLighter}>{item.totalContributors} Giver{item?.totalContributors === 1 ? "" : "s"}</Typography>
                         </View>
                         <View style={{ flexDirection: "row", gap: 3 }}>
-                            <Icons.GiftIcon size={22} color={Colors.textLighter} />
-                            <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 20)} color={Colors.textLighter}>{item.totalWishItems} Wish{item?.totalWishItems === 1 ? "" : "es"}</Typography>
+                            <Icons.GiftIcon size={21} color={Colors.textLighter} />
+                            <Typography fontFamily="urbanist-medium" size={verticalScale(17)} color={Colors.textLighter}>{item.totalWishItems} Wish{item?.totalWishItems === 1 ? "" : "es"}</Typography>
                         </View>
                     </View>
 
                     <Rangebar value={percentage} />
 
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 17 : 20)} color={Colors.textLighter}>{percentage}% Raised</Typography>
+                        <Typography fontFamily="urbanist-semibold" size={verticalScale(18)} color={Colors.neutral400}>{percentage}% Raised</Typography>
                         {!item?.isCompleted ? (
-                            <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 18 : 20.5)} color={BaseColors.primaryLight}>{item?.totalAmountReceived ? `${formatShortCurrency(item?.totalAmountReceived ?? 0)} / ${formatShortCurrency(item?.totalGoalAmount ?? 0)}` : formatCurrency(0)}</Typography>
+                            <Typography fontFamily="urbanist-bold" size={verticalScale(19)} color={BaseColors.primaryLight}>{item?.totalAmountReceived ? `${formatShortCurrency(item?.totalAmountReceived ?? 0)} / ${formatShortCurrency(item?.totalGoalAmount ?? 0)}` : formatCurrency(0)}</Typography>
                         ) : (
                             <View style={{ flexDirection: "row", alignItems: "center", gap: spacingX._5 }}>
-                                <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 18 : 20.5)} color={BaseColors.primaryLight}>Completed</Typography>
+                                <Typography fontFamily="urbanist-bold" size={verticalScale(19)} color={BaseColors.primaryLight}>Completed</Typography>
                                 <LottieView source={require("@/assets/lottie/popper-big.json")} loop autoPlay style={{ width: 24, height: 24, marginTop: -7 }} />
                             </View>
                         )}

@@ -3,11 +3,10 @@ import { useTheme } from '@/hooks/useTheme'
 import { verticalScale } from '@/utils/styling'
 import LottieView from "lottie-react-native"
 import React from 'react'
-import { Platform, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import Button from './Button'
 import Typography from './Typography'
 
-const isIOS = Platform.OS === "ios";
 
 export default function SubscribeCompleted({ handleFinish }: { handleFinish: () => void; }) {
     const { Colors } = useTheme();
@@ -22,12 +21,12 @@ export default function SubscribeCompleted({ handleFinish }: { handleFinish: () 
             />
 
             <View style={{ alignItems: "center", gap: spacingY._7 }}>
-                <Typography color={Colors.text} fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 32 : 35)}>Success!!</Typography>
-                <Typography color={Colors.textLighter} size={isIOS ? 18 : 20}>Your payment has been made successfully!</Typography>
+                <Typography color={Colors.text} fontFamily="urbanist-semibold" size={verticalScale(32.5)}>Success!!</Typography>
+                <Typography color={Colors.textLighter} size={19} style={{ textAlign: "center" }}>Your payment has been made successfully!</Typography>
             </View>
 
             <Button style={{ width: "100%"}} onPress={handleFinish}>
-                <Typography fontFamily="urbanist-semibold" size={isIOS ? 24 : 27} color={BaseColors.white}>Finsh</Typography>
+                <Typography fontFamily="urbanist-semibold" size={25} color={BaseColors.white}>Finish</Typography>
             </Button>
         </View>
     )

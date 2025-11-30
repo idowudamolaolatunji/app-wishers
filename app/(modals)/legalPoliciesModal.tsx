@@ -8,9 +8,8 @@ import { verticalScale } from '@/utils/styling'
 import { useRouter } from 'expo-router'
 import { CaretRightIcon } from 'phosphor-react-native'
 import React from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
-const isIOS = Platform.OS === "ios";
 
 export default function LegalPoliciesModal() {
     const router = useRouter();
@@ -23,7 +22,7 @@ export default function LegalPoliciesModal() {
 
                 <View style={{ flex: 1, gap: spacingY._5 }}>
                     <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("https://wishers.app/privacy-policy")}>
-                        <Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium">Privacy Policies</Typography>
+                        <Typography size={17} fontFamily="urbanist-medium">Privacy Policies</Typography>
 
                         <CaretRightIcon
                             size={verticalScale(20)}
@@ -32,7 +31,7 @@ export default function LegalPoliciesModal() {
                     </TouchableOpacity>
 
                     <TouchableOpacity activeOpacity={0.95} style={[styles.cardItem, { backgroundColor: Colors.cardBackground }]} onPress={() => router.push("https://wishers.app/terms-of-use")}>
-                        <Typography size={isIOS ? 16 : 18} fontFamily="urbanist-medium">Terms of Use</Typography>
+                        <Typography size={17} fontFamily="urbanist-medium">Terms of Use</Typography>
 
                         <CaretRightIcon
                             size={verticalScale(20)}

@@ -26,8 +26,6 @@ import { Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } fro
 import ImageView from "react-native-image-viewing";
 
 
-const isIOS = Platform.OS === "ios";
-
 export default function wishItemDetailModal() {
     const router = useRouter();
     const { user } = useAuth();
@@ -136,7 +134,7 @@ export default function wishItemDetailModal() {
                                 contentFit="cover"
                             />
                             <Typography
-                                size={isIOS ? 16 : 18}
+                                size={17}
                                 color={Colors.textLighter}
                                 style={{ textAlign: "center", marginTop: spacingY._15 }}
                             >
@@ -176,7 +174,7 @@ export default function wishItemDetailModal() {
                                     visible={visible}
                                     onRequestClose={() => setVisible(false)}
                                     animationType="slide"
-                                    presentationStyle={isIOS ? "overFullScreen" : "fullScreen"}
+                                    presentationStyle={Platform.OS === "ios" ? "overFullScreen" : "fullScreen"}
                                     FooterComponent={(item) => (
                                         <ImageFooterComponent index={item.imageIndex} total={images?.length} />
                                     )}
@@ -191,14 +189,14 @@ export default function wishItemDetailModal() {
                                 />
 
                                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 24 : 28)} color={Colors.primaryLight}>{formatCurrency(item?.goalAmount ?? 0)}</Typography>
-                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 19 : 21)} color={BaseColors.neutral500}>{formatCurrency(item?.amountReceived ?? 0)} Funded</Typography>
+                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(25)} color={Colors.primaryLight}>{formatCurrency(item?.goalAmount ?? 0)}</Typography>
+                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(20)} color={BaseColors.neutral500}>{formatCurrency(item?.amountReceived ?? 0)} Funded</Typography>
                                 </View>
 
                                 <View style={[styles.progressCard, { backgroundColor: Colors.cardBackground }]}>
                                     <View style={styles.flexRow}>
-                                        <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 17 : 19)} color={Colors.text}>Funding Progress</Typography>
-                                        <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 18 : 20.5)} color={BaseColors.primaryLight}>{percentage ?? 0}%</Typography>
+                                        <Typography fontFamily="urbanist-semibold" size={verticalScale(18)} color={Colors.text}>Funding Progress</Typography>
+                                        <Typography fontFamily="urbanist-bold" size={verticalScale(19.5)} color={BaseColors.primaryLight}>{percentage ?? 0}%</Typography>
                                     </View>
     
                                     <Rangebar value={percentage} />
@@ -206,12 +204,12 @@ export default function wishItemDetailModal() {
                                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                         <View style={{ flexDirection: "row", gap: 3 }}>
                                             <Icons.UsersThreeIcon size={verticalScale(20)} color={BaseColors.neutral500} />
-                                            <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 19)} color={BaseColors.neutral500}>{item?.contributorCount} Contributor{item?.contributorCount === 1 ? "" : "s"}</Typography>
+                                            <Typography fontFamily="urbanist-medium" size={verticalScale(18)} color={BaseColors.neutral500}>{item?.contributorCount} giver{item?.contributorCount === 1 ? "" : "s"}</Typography>
                                         </View>
 
                                         {item?.isCompleted ? (
                                             <View style={{ flexDirection: "row", alignItems: "center", gap: spacingX._7 }}>
-                                                <Typography fontFamily="urbanist-bold" size={verticalScale(isIOS ? 18 : 20.5)} color={BaseColors.primaryLight}>Completed</Typography>
+                                                <Typography fontFamily="urbanist-bold" size={verticalScale(19.5)} color={BaseColors.primaryLight}>Completed</Typography>
                                                 <LottieView source={require("@/assets/lottie/popper-big.json")} loop autoPlay style={{ width: 24, height: 24, marginTop: -7 }} />
                                             </View>
                                         ) : null}
@@ -219,9 +217,9 @@ export default function wishItemDetailModal() {
                                 </View>
 
                                 <View style={[styles.progressCard, { backgroundColor: Colors.cardBackground, marginTop: -spacingY._7 }]}>
-                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 18.5 : 21.5)} color={Colors.text}>Description</Typography>
+                                    <Typography fontFamily="urbanist-semibold" size={verticalScale(19)} color={Colors.text}>Description</Typography>
 
-                                    <Typography fontFamily="urbanist-medium" size={verticalScale(isIOS ? 17 : 19)} color={BaseColors.neutral500} textProps={{ numberOfLines: 5 }}>
+                                    <Typography fontFamily="urbanist-medium" size={verticalScale(18)} color={BaseColors.neutral500} textProps={{ numberOfLines: 5 }}>
                                         {item?.description || "--"}
                                     </Typography>
                                 </View>
@@ -233,16 +231,16 @@ export default function wishItemDetailModal() {
                                         style={{ backgroundColor: BaseColors.brown, marginTop: -spacingY._10, flexDirection: "row", alignItems: "center", gap: spacingY._5, }}
                                     >
                                         <Icons.PencilSimpleLineIcon color={BaseColors.white} weight="regular" size={verticalScale(24)} />
-                                        <Typography size={isIOS ? 20 : 22} color={BaseColors.white} fontFamily="urbanist-semibold">Modify this Wish</Typography>
+                                        <Typography size={20.5} color={BaseColors.white} fontFamily="urbanist-semibold">Modify this Wish</Typography>
                                     </Button>
                                 ) : null}
                             </View>
 
                             <ContributionList
-                                title="Contributions / Givers"
+                                title="Top Givers"
                                 data={contributors as ContributorType[]}
                                 loading={contributorLoading}
-                                emptyListMessage="No contribution yet!"
+                                emptyListMessage="No givers yet!"
                             />
                         </React.Fragment>
                     )}
@@ -270,7 +268,7 @@ function ImageHeaderComponent({ handleClose }: { handleClose: () => void }) {
                 }}
                 onPress={handleClose}
             >
-                <Icons.XIcon size={verticalScale(isIOS ? 23 : 26)} color={BaseColors.white} weight="bold" />
+                <Icons.XIcon size={verticalScale(23.5)} color={BaseColors.white} weight="bold" />
             </Pressable>
         </View>
     )
@@ -292,9 +290,9 @@ function ImageFooterComponent({ index, total }: { index: number, total: number }
                 borderRadius: radius._6,
             }}
         >
-            <Typography color={BaseColors.white} fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 18 : 21)}>{index + 1}</Typography>
-            <Typography color={BaseColors.white} fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 18 : 21)}>/</Typography>
-            <Typography color={BaseColors.white} fontFamily="urbanist-semibold" size={verticalScale(isIOS ? 18 : 21)}>{total}</Typography>
+            <Typography color={BaseColors.white} fontFamily="urbanist-semibold" size={verticalScale(18.5)}>{index + 1}</Typography>
+            <Typography color={BaseColors.white} fontFamily="urbanist-semibold" size={verticalScale(18.5)}>/</Typography>
+            <Typography color={BaseColors.white} fontFamily="urbanist-semibold" size={verticalScale(18.5)}>{total}</Typography>
         </View>
     );
 }

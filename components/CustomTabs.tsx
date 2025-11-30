@@ -18,9 +18,9 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
 
     const tabbarIcons: any = {
         index: (isFocused: boolean) => (
-            // <Icons.HouseIcon
-            <Icons.CompassIcon
-                size={verticalScale(Platform.OS === "ios" ? 31 : 33)}
+            // <Icons.CompassIcon
+            <Icons.HouseIcon
+                size={verticalScale(31.5)}
                 weight={isFocused ? "fill" : "regular"}
                 color={isFocused ? BaseColors.primaryLight : unFocusedColor}
             />
@@ -28,14 +28,14 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
         wishlist: (isFocused: boolean) => (
             // <Icons.NotepadIcon
             <Icons.ScrollIcon
-                size={verticalScale(Platform.OS === "ios" ? 31 : 33)}
+                size={verticalScale(31.5)}
                 weight={isFocused ? "fill" : "regular"}
                 color={isFocused ? BaseColors.primaryLight : unFocusedColor}
             />
         ),
         wallet: (isFocused: boolean) => (
             <Icons.WalletIcon
-                size={verticalScale(Platform.OS === "ios" ? 31 : 33)}
+                size={verticalScale(31.5)}
                 weight={isFocused ? "fill" : "regular"}
                 color={isFocused ? BaseColors.primaryLight : unFocusedColor}
             />
@@ -67,7 +67,7 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
             ) : (
                 <Icons.UserIcon
                     weight={isFocused ? "fill" : "regular"}
-                    size={verticalScale(Platform.OS === "ios" ? 31 : 33)}
+                    size={verticalScale(31.5)}
                     color={isFocused ? BaseColors.primaryLight : unFocusedColor}
                 />
             )
@@ -119,7 +119,7 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
                     >
                         {tabbarIcons[route.name] && tabbarIcons[route.name](isFocused)}
                         <Typography
-                            size={verticalScale(11)}
+                            size={12}
                             fontFamily='urbanist-semibold'
                             style={{
                                 color: isFocused ? Colors.primaryLight : unFocusedColor,
@@ -127,7 +127,7 @@ export default function CustomTabs({ state, descriptors, navigation }: BottomTab
                                 letterSpacing: 0.5
                             }}
                         >
-                            {label == "index" ? "Discover" : label}
+                            {label == "index" ? "Home" : label}
                         </Typography>
                     </TouchableOpacity>
                 );

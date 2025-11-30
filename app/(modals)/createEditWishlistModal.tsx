@@ -14,7 +14,7 @@ import { WishlistType } from "@/utils/types";
 import * as Burnt from "burnt";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from '../../components/Button';
 
@@ -146,7 +146,7 @@ export default function CreateEditWishlistModal() {
 
 			<View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
 				<Button onPress={handleSubmit} loading={loading} style={{ width: "100%" }} disabled={loading}>
-					<Typography size={Platform.OS == "ios" ? 22 : 25} color={BaseColors.white} fontFamily="urbanist-semibold">
+					<Typography size={23} color={BaseColors.white} fontFamily="urbanist-semibold">
 						{currentWishlistData?.id ? "Update" : "Create"} Wishlist
 					</Typography>
 				</Button>

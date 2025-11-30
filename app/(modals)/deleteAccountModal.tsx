@@ -7,10 +7,9 @@ import { useTheme } from "@/hooks/useTheme";
 import { scale, verticalScale } from "@/utils/styling";
 import { useRouter } from "expo-router";
 import React from 'react';
-import { Alert, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from "react-native-reanimated";
 
-const isIOS = Platform.OS === "ios"
 export default function DeleteAccountModal() {
     const router = useRouter();
     const { Colors, currentTheme } = useTheme();
@@ -38,8 +37,8 @@ export default function DeleteAccountModal() {
             <ScreenHeader title='Delete Your Account?' leftElement={<BackButton iconType="cancel" />} style={{ marginBottom: spacingY._10 }} />
 
             <Animated.ScrollView contentContainerStyle={{ gap: spacingY._20, marginTop: spacingY._20 }}>
-                <Typography size={verticalScale(isIOS ? 19 : 21)} fontFamily="urbanist-medium" color={Colors.text} style={{ lineHeight: 25 }}>This will permanently remove your personal information from the app, including transaction history, saved settings, and login data.</Typography>
-                <Typography size={verticalScale(isIOS ? 19 : 21)} fontFamily="urbanist-medium" color={Colors.text}>You won't be able to undo this action.</Typography>
+                <Typography size={verticalScale(20)} fontFamily="urbanist-medium" color={Colors.text} style={{ lineHeight: 25 }}>This will permanently remove your personal information from the app, including transaction history, saved settings, and login data.</Typography>
+                <Typography size={verticalScale(20)} fontFamily="urbanist-medium" color={Colors.text}>You won't be able to undo this action.</Typography>
 
             </Animated.ScrollView>
         </View>

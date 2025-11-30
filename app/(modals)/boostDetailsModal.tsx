@@ -5,24 +5,23 @@ import { spacingY } from '@/constants/theme'
 import React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
-export default function TransactionModal() {
+export default function BoostDetailsModal() {
     return (
         <ModalWrapper>
             <View style={styles.container}>
-                <ScreenHeader title="Transaction Details" leftElement={<BackButton />} style={{ marginBottom: spacingY._10 }} />
+                <ScreenHeader title="Boosting Details" leftElement={<BackButton />} style={{ marginBottom: spacingY._10 }} />
 
-                {/* the rest of it... */}
                 <ScrollView showsVerticalScrollIndicator={false}>
                 </ScrollView>
             </View>
         </ModalWrapper>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "space-between",
-        paddingHorizontal: spacingY._20,
-    },
-})
+    
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            justifyContent: "space-between",
+            paddingHorizontal: spacingY._20,
+        },
+    })

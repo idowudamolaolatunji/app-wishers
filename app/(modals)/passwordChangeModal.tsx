@@ -7,7 +7,7 @@ import { scale, verticalScale } from "@/utils/styling";
 import * as Burnt from "burnt";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Button from "../../components/Button";
 import FormInput from "../../components/FormInput";
 import ScreenHeader from "../../components/ScreenHeader";
@@ -70,7 +70,7 @@ export default function PasswordChange() {
 
             <View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
                 <Button onPress={handleSubmit} loading={loading} disabled={loading} style={{ width: "100%" }}>
-                    <Typography size={Platform.OS == "ios" ? 22 : 25} color={Colors.white} fontFamily="urbanist-semibold">Change Password</Typography>
+                    <Typography size={22.5} color={Colors.white} fontFamily="urbanist-semibold">Change Password</Typography>
                 </Button>
             </View>
         </ModalWrapper>
