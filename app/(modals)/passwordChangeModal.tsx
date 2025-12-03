@@ -1,19 +1,25 @@
 import Asterisk from "@/components/Asterisk";
 import BackButton from "@/components/BackButton";
 import ModalWrapper from "@/components/ModalWrapper";
+import { auth } from "@/config/firebase";
 import { BaseColors, spacingX, spacingY } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { scale, verticalScale } from "@/utils/styling";
 import * as Burnt from "burnt";
+import { useRouter } from "expo-router";
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "../../components/Button";
 import FormInput from "../../components/FormInput";
 import ScreenHeader from "../../components/ScreenHeader";
 import Typography from "../../components/Typography";
 
+
 export default function PasswordChange() {
+    const router = useRouter();
     const { Colors, currentTheme } = useTheme();
     const [passwordData, setPasswordData] = useState({ password: "", newPassword: "" });
     const [loading, setLoading] = useState(false);
@@ -25,8 +31,31 @@ export default function PasswordChange() {
         }
 
         setLoading(true);
+        
+        try {
+            const user = auth?.currentUser;
 
-        try {} catch(err: any) {} finally {
+            // STEP 1: Reauthenticate
+            const credential = EmailAuthProvider.credential(user?.email!, password);
+            await reauthenticateWithCredential(user!, credential);
+
+            // STEP 2: Update password
+            await updatePassword(user!, newPassword);
+
+            Burnt.toast({ haptic: "success", title: "Password changed successfully!" });
+            router.back();
+
+        } catch(err: any) {
+            if (err.code === "auth/wrong-password") {
+                Burnt.toast({ haptic: "error", title: "Current password is incorrect!" });
+            } else if (err.code === "auth/weak-password") {
+                Burnt.toast({ haptic: "error", title: "Weak password! Use a stronger one." });
+            } else if (err.code === "auth/requires-recent-login") {
+                Burnt.toast({ haptic: "error", title: "Session expired. Please log in again.", });
+            } else {
+                Burnt.toast({ haptic: "error", title: "Unable to change password." });
+            }
+        } finally {
             setLoading(false);
         }
     }
@@ -36,7 +65,11 @@ export default function PasswordChange() {
             <View style={styles.container}>
                 <ScreenHeader title='Change Password' leftElement={<BackButton iconType="cancel" />} style={{ marginBottom: spacingY._35 }} />
                 
-                <View style={styles.formItems}>
+                <KeyboardAwareScrollView
+                    keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={styles.formItems}
+                    enableOnAndroid
+                >
                     <View style={styles.inputContainer}>
                         <Typography fontFamily="urbanist-bold" color={Colors.textLighter}>
                             Old Password <Asterisk />
@@ -65,7 +98,7 @@ export default function PasswordChange() {
                             icon={<Icons.PasswordIcon size={verticalScale(26)} color={BaseColors.neutral400} />}
                         />
                     </View>
-                </View>
+                </KeyboardAwareScrollView>
             </View>
 
             <View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>

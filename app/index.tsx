@@ -15,7 +15,7 @@ export default function index() {
                 source={require("../assets/svgs/logo.svg")}
             />
 
-            <ActivityIndicator size="large" color={Colors.accentDarker} />
+            <ActivityIndicator size="large" color={Colors.accentDark} />
         </View>
     )
 }

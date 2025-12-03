@@ -4,6 +4,7 @@ import HomeReferral from "@/components/HomeReferral";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { BaseColors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotification } from "@/contexts/NotificationContext";
 import useFetchData from "@/hooks/useFetchData";
 import { useTheme } from "@/hooks/useTheme";
 import { formatCurrency } from "@/utils/helpers";
@@ -21,6 +22,7 @@ import { scale, verticalScale } from '../../utils/styling';
 export default function HomeScreen() {
 	const router = useRouter();
 	const { user } = useAuth();
+	const { notificationCount } = useNotification();
 	const { Colors, currentTheme } = useTheme();
 	const displayName = user?.name?.split(" ").slice(0, 2).join(" ")
 
@@ -67,6 +69,11 @@ export default function HomeScreen() {
 					</Animated.View>
 
 					<TouchableOpacity style={[styles.headerIcn, { backgroundColor: Colors.background300 }]} onPress={() => router.push("/(modals)/notificationModal")}>
+						{notificationCount != 0 && (
+							<View style={styles.notificationCount}>
+								<Typography fontFamily="urbanist-semibold" size={14}>{notificationCount >= 10 ? "9+" : notificationCount || 0}</Typography>
+							</View>
+						)}
 						<Icons.BellIcon weight="bold" size={verticalScale(23)} color={Colors.textLighter} />
 					</TouchableOpacity>
 				</View>
@@ -209,7 +216,18 @@ const styles = StyleSheet.create({
 	},
 	headerIcn: {
 		padding: spacingX._10,
-		borderRadius: 50
+		borderRadius: 50,
+		position: "relative",
+	},
+	notificationCount: {
+		position: "absolute",
+		top: -5,
+		right: 1,
+		borderRadius: 50,
+		width: verticalScale(20),
+		height: verticalScale(20),
+		backgroundColor: BaseColors.red,
+		alignItems: "center",
 	},
 	scrollViewStyle: {
 		paddingHorizontal: spacingX._18,

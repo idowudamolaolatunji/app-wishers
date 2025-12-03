@@ -1,6 +1,7 @@
 import { firestore } from "@/config/firebase";
 import { generateSlug } from "@/utils/helpers";
 import { ResponseType, WishItemType, WishlistType } from "@/utils/types";
+import { router } from "expo-router";
 import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, increment, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { uploadFileToCloudinary } from "./imageService";
 
@@ -143,6 +144,7 @@ export const createOrUpdateWishItem = async function (wishData: Partial<WishItem
 export const deleteWishlist = async function (wishlistId: string): Promise<ResponseType> {
     try {
         const wishlistRef = doc(firestore, "wishlists", wishlistId);
+        router.replace({ pathname: "/(tabs)/wishlist" });
         await deleteDoc(wishlistRef);
 
         // delete wishitems & transactions

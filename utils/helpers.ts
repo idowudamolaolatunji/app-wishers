@@ -26,6 +26,14 @@ export function generateSlug(num=10) {
   return nanoid();
 };
 
+export function truncateString(input: string, num:number = 25): string {
+	if (input?.length > num) {
+		return input?.substring(0, num) + "...";
+	} else {
+		return input;
+	}
+}
+
 export function calculatePercentage(current: number, target: number): number {
 	if (target === 0) return 0;
 	const percentage = (current / target) * 100;

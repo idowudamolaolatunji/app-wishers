@@ -1,5 +1,6 @@
 import { firestore } from "@/config/firebase";
-import { AppTransactionType, ResponseType } from "@/utils/types";
+import { generateSlug } from "@/utils/helpers";
+import { AppTransactionType, BankAccountType, ResponseType } from "@/utils/types";
 import { collection, doc, increment, setDoc, updateDoc } from "firebase/firestore";
 
 export const processOneTimePayment = async function(reference: string, uid: string, amount: number): Promise<ResponseType> {
@@ -33,6 +34,7 @@ export const processOneTimePayment = async function(reference: string, uid: stri
         return { success: false, msg: err?.message };
     }
 }
+
 
 export const processWishlistBoosting = async function(reference: string, uid: string, amount: number, wishlistId: string, durationInMS: number): Promise<ResponseType> {
     try {
@@ -71,7 +73,70 @@ export const processWishlistBoosting = async function(reference: string, uid: st
             lastBoostedAt: new Date().toISOString(),
             previousBoostingCount: increment(1),
         });
-        console.log("It works")
+
+        return { success: true }
+    } catch(err: any) {
+        return { success: false, msg: err?.message };
+    }
+}
+
+
+export const processWithdrawalTransaction = async function(amount: number, bankAccount: BankAccountType, reason: string ): Promise<ResponseType> {
+    console.log("I was clicked!!");
+
+
+    const recipientData = {
+        type: 'nuban',
+        name: bankAccount?.accountName,
+        account_number: bankAccount?.accountNumber,
+        bank_code: bankAccount?.bankCode,
+        currency: bankAccount?.currency || "NGN",
+    };
+
+    try {
+        const recepient_res = await fetch(`https://api.paystack.co/transferrecipient`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_PAYSTACK_SECRET_KEY}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(recipientData),
+        })
+
+        const recepient_data = await recepient_res.json();
+        const recipientCode = recepient_data?.data?.recipient_code;
+        // console.log(recepient_data, recipientCode);
+
+        const init_res = await fetch(`https://api.paystack.co/transfer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_PAYSTACK_SECRET_KEY}`,
+            },
+            body: JSON.stringify({
+                source: "balance",
+                amount: amount * 100, // amount in kobo
+                recipient: recipientCode,
+                reference: generateSlug(16),
+                reason,
+            })
+        });
+
+        const init_data = await init_res.json();
+        const reference = init_data?.data?.refeence;
+        console.log(init_data, reference)
+
+
+        const status_res = await fetch(`https://api.paystack.co/transfer/${reference}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_PAYSTACK_SECRET_KEY}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        const status_data = await status_res.json();
+        console.log(status_data)
+
         return { success: true }
     } catch(err: any) {
         return { success: false, msg: err?.message };

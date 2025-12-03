@@ -166,7 +166,6 @@ export default function wishlistDetailModal() {
         setLoading({ ...loading, delete: true });
 
         try {
-            router.dismissTo({ pathname: "/(tabs)/wishlist" });
             const res = await deleteWishlist(wishlist?.id!);
             if(!res.success) throw new Error(res?.msg);
             Burnt.toast({ haptic: "success", title: "Successful!" });
@@ -252,7 +251,7 @@ export default function wishlistDetailModal() {
 
                             {!wishlist?.isCompleted && (
                                 <React.Fragment>
-                                    {(wishlist?.currentboostExpiresAt! <= new Date().toISOString()) ? (
+                                    {(!wishlist?.currentboostExpiresAt || wishlist?.currentboostExpiresAt! <= new Date().toISOString()) ? (
                                         <TouchableOpacity onPress={handleGotoBoostingModal} style={{ paddingHorizontal: spacingY._17, paddingVertical: spacingY._10, borderBottomWidth: 1, borderBottomColor: BaseColors.neutral600, flexDirection: "row", gap: spacingX._5, alignItems: "center", justifyContent: "flex-start" }}>
                                             <Icons.RocketLaunchIcon color={Colors.text} weight="bold" size={verticalScale(24)} />
                                             <Typography fontFamily="urbanist-semibold" size={19}>Boost</Typography>
@@ -271,7 +270,7 @@ export default function wishlistDetailModal() {
 
                 {mainLoading && (
                     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                        <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
+                        <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDark"]} />
                     </View>
                 )}
 
@@ -345,7 +344,7 @@ export default function wishlistDetailModal() {
 
                             {(wishlist?.totalWishItems && wishlist?.totalWishItems > 0) ? (
                                 <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", gap: scale(12) }}>
-                                    <Button onPress={handleShare} disabled={loading.share} style={{ flexDirection: "row", alignItems: "center", gap: spacingY._5, backgroundColor: BaseColors.accentDarker, flex: 1 }}>
+                                    <Button onPress={handleShare} disabled={loading.share} style={{ flexDirection: "row", alignItems: "center", gap: spacingY._5, backgroundColor: BaseColors.accentDark, flex: 1 }}>
                                         {loading.share ? (
                                             <Loading color={BaseColors.neutral700} />
                                         ) : (
@@ -369,7 +368,7 @@ export default function wishlistDetailModal() {
                                         <Icons.QrCodeIcon color={Colors.text} weight="bold" size={verticalScale(24)} />
                                     </Button>
                                     
-                                    {(wishlist?.currentboostExpiresAt! <= new Date().toISOString()) && (
+                                    {(!wishlist?.currentboostExpiresAt || wishlist?.currentboostExpiresAt! <= new Date().toISOString()) && (
                                         <Button
                                             onPress={handleGotoBoostingModal}
                                             style={{

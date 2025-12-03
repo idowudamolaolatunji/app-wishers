@@ -1,6 +1,6 @@
 import { firestore } from "@/config/firebase";
 import { ResponseType, UserDataType } from "@/utils/types";
-import { doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { uploadFileToCloudinary } from "./imageService";
 
 export const updateUser = async function(uid: string, updatedData: UserDataType): Promise<ResponseType> {
@@ -24,3 +24,26 @@ export const updateUser = async function(uid: string, updatedData: UserDataType)
     }
 }
 
+
+export async function saveExpoPushToken(uid: string, pushtoken: string) {
+    try {
+        const userRef = doc(firestore, "users", uid)
+        const snap = await getDoc(userRef);
+        if (!snap.exists()) return;
+
+        const data = snap.data();
+        const tokens: string[] = data.expoPushTokens || [];
+
+        // If token not already saved then add it
+        if (!tokens.includes(pushtoken)) {
+            await updateDoc(userRef, {
+                expoPushTokens: arrayUnion(pushtoken)
+            });
+        }
+
+        return { success: true, msg: "Token updated!" }
+        
+    } catch(err: any) {
+        return { success: false, msg: err?.message }
+    }
+}

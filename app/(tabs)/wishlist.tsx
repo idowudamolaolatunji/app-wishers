@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import useFetchData from "@/hooks/useFetchData";
 import { useTheme } from "@/hooks/useTheme";
 import { getFilePath } from "@/services/imageService";
-import { processOneTimePayment } from "@/services/paymentService";
+import { processOneTimePayment } from "@/services/paymentServices";
 import { updateUser } from "@/services/userService";
 import { calculatePercentage, formatCurrency, formatShortCurrency } from "@/utils/helpers";
 import { verticalScale } from "@/utils/styling";
@@ -144,7 +144,7 @@ export default function WishlistScreen() {
                 >
                     {loading && (
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                            <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
+                            <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDark"]} />
                         </View>
                     )}
 

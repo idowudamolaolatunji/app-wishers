@@ -76,7 +76,7 @@ export default function SettingsModal() {
                                     <ToggleSwitch
                                         isOn={biometricEnabled || bioEnabled}
                                         onColor={BaseColors.primary}
-                                        offColor={BaseColors.accentDarker}
+                                        offColor={BaseColors.accentDark}
                                         size="small"
                                         onToggle={isOn => toggleBiometric(isOn)}
                                     />
@@ -108,7 +108,6 @@ export default function SettingsModal() {
                         />
                     </View>
 
-                    {/* the rest of it */}
                 </ScrollView>
             </View>
         </ModalWrapper>

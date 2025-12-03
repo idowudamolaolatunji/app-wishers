@@ -20,7 +20,7 @@ export default function ContributionList({ data, title, loading, emptyListMessag
     const { Colors, currentTheme } = useTheme();
 
     const handleClick = function(item: ContributorType) {
-        router.push({ pathname: "/(modals)/contributorModal", params: { id: item?.id, } })
+        router.push({ pathname: "/(modals)/contributorModal", params: { refId: item?.refId, } })
     }
 
   return (
@@ -75,7 +75,7 @@ function ContributionItem({ item, index, handleClick }: ContributorItemProps) {
             <TouchableOpacity
                 activeOpacity={1}
                 style={[styles.row, { backgroundColor: Colors.cardBackground }]}
-                // onPress={() => handleClick(item)}
+                onPress={() => handleClick(item)}
             >
                 <View style={styles.imageContainer}>
                     <Image

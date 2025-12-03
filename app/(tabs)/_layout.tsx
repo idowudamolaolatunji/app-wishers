@@ -6,11 +6,7 @@ import React from "react";
 export default function TabsLayout() {
 	return (
 		<Tabs
-            screenOptions={{
-                // tabBarActiveTintColor: "coral",
-                // tabBarInactiveTintColor: "#bbb",
-                headerShown: false
-            }}
+            screenOptions={{ headerShown: false }}
             tabBar={(props) => <CustomTabs {...props} />}
         >
 			{/* <Tabs.Screen

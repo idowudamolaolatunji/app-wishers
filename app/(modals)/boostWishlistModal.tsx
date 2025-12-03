@@ -10,7 +10,7 @@ import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAppContext } from "@/contexts/AppContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/useTheme";
-import { processWishlistBoosting } from "@/services/paymentService";
+import { processWishlistBoosting } from "@/services/paymentServices";
 import { calculatePercentage, formatCurrency } from "@/utils/helpers";
 import { scale, verticalScale } from "@/utils/styling";
 import { BoostingPlanType } from "@/utils/types";

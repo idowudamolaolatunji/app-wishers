@@ -63,19 +63,19 @@ export default function ProfileScreen() {
             text: "See our policies and terms or use",
             bgColor: BaseColors.neutral500,
         },
-        {
-            title: "Payment Bank Setup",
-            icon: (
-                <Icons.BankIcon
-                    size={26}
-                    color={Colors.text}
-                    weight="fill"
-                />
-            ),
-            routeName: "/(modals)/bankSetupModal",
-            text: "Add your bank details to recieve payments",
-            bgColor: "#D97D55",
-        },
+        // {
+        //     title: "Payment Bank",
+        //     icon: (
+        //         <Icons.BankIcon
+        //             size={26}
+        //             color={Colors.text}
+        //             weight="fill"
+        //         />
+        //     ),
+        //     routeName: "/(modals)/bankSetupModal",
+        //     text: "Add your bank details to recieve payments",
+        //     bgColor: "#D97D55",
+        // },
         {
             title: "Frequently Asked",
             icon: (

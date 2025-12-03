@@ -1,4 +1,4 @@
-import { firestore } from "@/config/firebase";
+import { firestore, handleFirebaseError } from "@/config/firebase";
 import { collection, onSnapshot, query, QueryConstraint } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
@@ -34,14 +34,8 @@ export default function useFetchData<T>(collectionName: string, constrains: Quer
 				}
 			},
 			(err: any) => {
-				console.log("Error fetching data: ", err);
-				if (err.code === 'unavailable') {
-					setError('No internet connection. Please check your network.');
-				} else if (err.code === 'permission-denied') {
-					setError('Access denied. Please login.');
-				} else {
-					setError(err.message || "Oops Error!");
-				}
+				const message = handleFirebaseError(err);
+				setError(message || "Oops Error!");
 				setLoading(false);
 			},
 		);

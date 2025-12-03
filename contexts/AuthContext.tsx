@@ -1,8 +1,10 @@
-import { auth, firestore } from "@/config/firebase";
+import { auth, firestore, handleFirebaseError } from "@/config/firebase";
 import { useBiometricAuth } from '@/hooks/useBiometricsAuth';
 import { createWallet } from "@/services/walletService";
 import { generateSlug } from "@/utils/helpers";
+import { savePushToken } from "@/utils/pushToken";
 import { AuthContextType, UserType } from "@/utils/types";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
@@ -20,32 +22,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
     const [biometricEnabled, setBiometricEnabled] = useState(true);
     const { authenticate, saveBiometricPreference, getBiometricPreference } = useBiometricAuth();
     //////////////////////////////////////////////////////////////////////////
+    // this was to help fix something
+    const [verifiedUid, setVerifiedUid] = useState<string>("");
+    /////////////////////////////////
 
     useEffect(function() {
         const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-            if(firebaseUser?.uid) {
+            if(firebaseUser?.uid && firebaseUser?.emailVerified == true) {
                 setUser({
                     uid: firebaseUser?.uid,
                     email: firebaseUser?.email,
                     name: firebaseUser?.displayName,
                 });
 
-                updateUserData(firebaseUser?.uid)
+                // (got the updated user data)
+                updateUserData(firebaseUser?.uid);
+
+                // save push token if none or if new
+                savePushToken(firebaseUser?.uid);
                 router.replace("/(tabs)")
-            } else {
+            }
+
+            // do nothing if email not verified, we perfromed the task somewhere else
+            if (firebaseUser?.uid && firebaseUser?.emailVerified == false) return;
+            
+            if(firebaseUser?.emailVerified == false || !firebaseUser?.uid) {
                 // NO USER
                 setUser(null);
-                router.replace("/(auth)/welcome")
+
+                // check if user existed before
+                (async function() {
+                    const data = await getStoredUserData();
+
+                    if(data?.email) {
+                        router.replace("/(auth)/login")
+                    } else {
+                        router.replace("/(auth)/welcome")
+                    }
+                })();
             }
-        });
+        }, handleFirebaseError);
 
         // check if biometrics is enabled
         checkBiometricStatus();
 
         return () => unsub();
-    }, []);
+    }, [verifiedUid]);
 
-    const checkBiometricStatus = async () => {
+    // Checking to see what the biometric status is and setting it here
+    const checkBiometricStatus = async function() {
         const enabled = await getBiometricPreference();
         setBiometricEnabled(enabled);
     };
@@ -72,7 +97,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
 
     async function login(email: string, password: string) {
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const res = await signInWithEmailAndPassword(auth, email, password);
+            if(res?.user?.emailVerified == false) {
+                return { success: false, msg: "Email not verified", user: res?.user }
+            } else {
+                setVerifiedUid(res?.user?.uid);
+            }
 
             // STORE THE AUTH
             StoreAuth(email, password);
@@ -80,12 +110,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
 
         } catch(err: any) {
             let msg = err.message;
-            if(msg?.includes("(auth/invalid-credential)") || msg?.includes("(auth/invalid-email)")) {
-                msg = "Wrong credentials!"
-            }
-
+            if(msg?.includes("(auth/invalid-credential)")) msg = "Wrong credentials!"
+            if(msg?.includes("(auth/invalid-email)")) msg = "Invalid email address"
             if(msg?.includes("(auth/network-request-failed)")) msg = "Check network connections";
-
             return { success: false, msg }
         }
     }
@@ -105,6 +132,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
             }
 
             let response = await createUserWithEmailAndPassword(auth, email, password);
+            const newToken = await Notifications.getExpoPushTokenAsync();
+
             await setDoc(doc(firestore, "users", response?.user?.uid), {
                 name,
                 email,
@@ -114,21 +143,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
                 isSubscribed: false,
                 isActive: true,
                 createdAt: new Date(),
+                expoPushTokens: [newToken.data],
                 ...((referralCode && referrerUid) && { referredBy: referrerUid }),
             });
-            await createWallet(response?.user?.uid)
-
+            await createWallet(response?.user?.uid);
+            
             // STORE THE AUTH
             StoreAuth(email, password, name);
-            return { success: true }
-
+            return { success: true, user: response?.user }
         } catch(err: any) {
             let msg = err.message;
-            if(msg?.includes("(auth/email-already-in-use)") || msg?.includes("(auth/invalid-email)")) {
-                msg = "Email already in use"
-            }
+            if(msg?.includes("(auth/email-already-in-use)")) msg = "Email already in use"
+            if(msg?.includes("(auth/invalid-email)")) msg = "Invalid email address"
             if(msg?.includes("(auth/network-request-failed)")) msg = "Check network connections";
-
             return { success: false, msg }
         }
     }
@@ -150,6 +177,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
                     isSubscribed: data?.isSubscribed || false,
                     referredBy: data?.referredBy || null,
                     createdAt: data?.createdAt || null,
+                    expoPushTokens: data?.expoPushTokens || null,
                 }
 
                 setUser({ ...userData });

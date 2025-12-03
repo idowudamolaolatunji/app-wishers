@@ -27,7 +27,7 @@ export default function ThemeButton({ title, icon, onPress, isActive }: ThemeBut
 
             {(loading && isActive) ? (
                 <View style={{ marginLeft: "auto", height: verticalScale(20) }}>
-                    <Loading size="small" color={BaseColors[currentTheme == "dark" ? "accentDarker" : "primaryLight"]} />
+                    <Loading size="small" color={BaseColors[currentTheme == "dark" ? "accentDark" : "primaryLight"]} />
                 </View>
             ) : (
                 <MaterialCommunityIcons name={isActive ? "check-circle" : "checkbox-blank-circle-outline"} size={18} color={isActive ? Colors.primaryLight : Colors.textLighter} />

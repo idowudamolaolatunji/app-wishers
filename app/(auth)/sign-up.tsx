@@ -2,15 +2,18 @@ import Button from '@/components/Button';
 import FormInput from '@/components/FormInput';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typography from '@/components/Typography';
-import { BaseColors, spacingX, spacingY } from '@/constants/theme';
+import { BaseColors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import { verticalScale } from '@/utils/styling';
 import * as Burnt from 'burnt';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { sendEmailVerification } from 'firebase/auth';
 import * as Icons from "phosphor-react-native";
 import React, { useState } from 'react';
-import { Alert, Keyboard, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Keyboard, Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import ModalView from "react-native-modal";
 import { useAuth } from '../../contexts/AuthContext';
 
 
@@ -18,11 +21,14 @@ export default function SignupScreen() {
     const { Colors } = useTheme();
     const router = useRouter();
     const { register: registerUser } = useAuth();
+    const { disableBiometric, biometricEnabled } = useAuth();
 
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: "", email: "", password: "", referralCode: ""
     });
+    const [showModal, setShowModal] = useState(false)
+    
 
     async function handleSubmit() {
         Keyboard.dismiss();
@@ -44,7 +50,13 @@ export default function SignupScreen() {
                 throw new Error(res.msg)
             }
 
-            // console.log(res);
+            // send verification email
+            await sendEmailVerification(res.user!);
+            setShowModal(true);
+            if(biometricEnabled) {
+                await disableBiometric();
+            }
+            
             if(Platform.OS !== "ios") {
                 Burnt.toast({ title: "Successful", haptic: "success" });
             }
@@ -57,8 +69,9 @@ export default function SignupScreen() {
         } finally {
             setLoading(false);
         }
-
     }
+
+
     return (
         <ScreenWrapper>
             <View style={styles.container}>
@@ -129,20 +142,61 @@ export default function SignupScreen() {
                             </Pressable>
                         </View>
 
-
                         <Button onPress={handleSubmit} loading={loading}>
-                            <Typography size={Platform.OS == "ios" ? 20 : 22} color={Colors.background} fontFamily='urbanist-extrabold'>Sign Up</Typography>
+                            <Typography size={Platform.OS == "ios" ? 20 : 22} color={BaseColors.white} fontFamily='urbanist-extrabold'>Sign Up</Typography>
                         </Button>
                     </View>
 
                     <View style={styles.footerArea}>
                         <Typography size={15}>Already have an account?</Typography>
                         <Pressable onPress={() => router.navigate("/(auth)/login")}>
-                            <Typography size={15} color={BaseColors.primary} fontFamily="urbanist-semibold">Login!</Typography>
+                            <Typography size={15} color={BaseColors.primary} fontFamily="urbanist-bold">Login!</Typography>
                         </Pressable>
                     </View>
                 </KeyboardAwareScrollView>
             </View>
+
+            {/* VERIFICATION SENT */}
+            <ModalView
+                isVisible={showModal}
+                backdropOpacity={0.7}
+                backdropTransitionInTiming={800}
+                backdropTransitionOutTiming={500}
+                onBackdropPress={() => {
+                    setShowModal(false)
+                    router.replace("/(auth)/login");
+                }}
+            >
+                <View style={[styles.card, { backgroundColor: Colors.cardBackground }]}>
+                    <Image
+                        source={require("@/assets/images/icon-check.png")}
+                        style={{ width: verticalScale(100), aspectRatio: 1, }}
+                    />
+        
+                    <View style={{ alignItems: "center", gap: spacingY._7 }}>
+                        <Typography color={Colors.text} fontFamily="urbanist-semibold" style={{ textAlign: "center" }} size={verticalScale(32)}>Email Verification Sent</Typography>
+                        <Typography color={Colors.textLighter} size={19} style={{ textAlign: "center" }}>Check your email as a verification email was sent to {formData?.email}</Typography>
+                    </View>
+        
+                    <Button style={{ width: "100%"}} loading={loading} onPress={() => {
+                        setShowModal(false);
+                        router.replace("/(auth)/login");
+                        Linking.openURL("mailto:")
+                    }}>
+                        <Typography fontFamily="urbanist-semibold" size={25} color={BaseColors.white}>{Platform.OS == "ios" ? "Open Email app" : "Go to Gmail app"}</Typography>
+                    </Button>
+                </View>
+
+                <Pressable
+                    onPress={() => {
+                        setShowModal(false)
+                        router.replace("/(auth)/login");
+                    }}
+                    style={styles.cardCloseButton}
+                >
+                    <Icons.XIcon size={verticalScale(23.5)} color={BaseColors.white} weight="bold" />
+                </Pressable>
+            </ModalView>
         </ScreenWrapper>
     );
 }
@@ -170,10 +224,32 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 5,
-        marginTop: -5
+        marginTop: -18
     },
     footerText: {
         textAlign: "center",
         fontSize: verticalScale(15)
-    }
+    },
+
+    // VERIFICATION CARDS
+    card: {
+        minHeight: verticalScale(100),
+        borderRadius: radius._10,
+        padding: spacingY._17,
+        paddingVertical: spacingY._25,
+
+        alignItems: "center",
+        gap: spacingY._25,
+        textAlign: "center",
+    },
+    cardCloseButton: {
+        width: verticalScale(50),
+        height: verticalScale(50),
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: BaseColors.neutral800,
+        borderRadius: 70,
+        alignSelf: "center",
+        marginTop: spacingY._10
+    },
 });

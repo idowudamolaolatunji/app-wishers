@@ -23,7 +23,7 @@ export function useBiometricAuth() {
 	const authenticate = async function() {
 		try {
 			const result = await LocalAuthentication.authenticateAsync({
-				promptMessage: "Authenticate GiftMe",
+				promptMessage: "Authenticate Wishers",
 				fallbackLabel: "Use Password",
 				disableDeviceFallback: false,
 			});

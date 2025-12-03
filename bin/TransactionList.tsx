@@ -7,8 +7,7 @@ import { FlashList } from "@shopify/flash-list"
 import { useRouter } from 'expo-router'
 import * as Icons from "phosphor-react-native"
 import React from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import Animated, { FadeInDown } from 'react-native-reanimated'
+import { StyleSheet, View } from 'react-native'
 import Loading from './Loading'
 import Typography from './Typography'
 
@@ -18,7 +17,7 @@ export default function TransactionList({ data, title, loading }: TransactionLis
     const { Colors, currentTheme } = useTheme();
 
     const handleClick = function(item: TransactionType) {
-        router.push({ pathname: "/(modals)/transactionModal", params: { id: item?.id, } })
+        router.push({ pathname: "/(modals)/transactionDetailsModal", params: { id: item?.id, } })
     }
 
     return (
@@ -69,10 +68,10 @@ export function TransactionItem({ item, index, handleClick }: TransactionItemPro
     // })
 
     return (
-        <Animated.View entering={FadeInDown.delay(index * 70)}>
-            <TouchableOpacity
-                activeOpacity={1}
+        // <Animated.View entering={FadeInDown.delay(index * 70)}>
+            <View
                 style={[styles.row, { backgroundColor: Colors[currentTheme == "dark" ? "cardBackground" : "background300"], marginTop: index == 0 ? spacingY._20 : 0 }]}
+                // activeOpacity={1}
                 // onPress={() => handleClick(item)}
             >
                 <View style={[styles.imageContainer, { backgroundColor: BaseColors[item?.type == "Withdrawal" ? "brownAccent" : "violetAccent"] }]}>
@@ -82,7 +81,6 @@ export function TransactionItem({ item, index, handleClick }: TransactionItemPro
                         <Icons.HandDepositIcon color={BaseColors.blue} weight="bold" size={25} />
                     )}
                 </View>
-                
 
                 <View style={styles.details}>
                     <Typography
@@ -106,8 +104,8 @@ export function TransactionItem({ item, index, handleClick }: TransactionItemPro
                     <Typography size={18} fontFamily="urbanist-bold" color={BaseColors[item?.type == "Withdrawal" ? "brown" : currentTheme == "dark" ? "primary" : "blue"]}>{formatCurrency(item.amount ?? 0, 0)}</Typography>
                     <Typography size={12.5} fontFamily="urbanist-medium" color={Colors.textLighter}>{formatDate(item?.paidAt)}</Typography>
                 </View>
-            </TouchableOpacity>
-        </Animated.View>
+            </View>
+        // </Animated.View>
     )
 }
 

@@ -12,8 +12,23 @@ import { PaystackProvider } from "react-native-paystack-webview";
 import 'react-native-reanimated';
 import ErrorFallback from "./error";
 
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import { verticalScale } from "@/utils/styling";
 // import { useNavigationMode } from 'react-native-navigation-mode';
+
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+	handleNotification: async () => {
+		return {
+			shouldPlaySound: true,
+			shouldSetBadge: true,
+			shouldShowAlert: true,
+			// shouldShowBanner: true,
+			// shouldShowList: true,
+		};
+	},
+});
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,50 +67,53 @@ export default function RootLayout() {
 			FallbackComponent={ErrorFallback}
 			onError={(error, info) => console.error("Global error caught:", error, info)}
 		>
-			<NetworkProvider>
-				<AppProvider>
-					<AuthProvider>
-						<ThemeProvider>
-							<PaystackProvider
-								debug
-								currency="NGN"
-								defaultChannels={[
-									"bank_transfer",
-									"card",
-									"ussd",
-								]}
-								publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY!}
-							>
-								<View style={{ flex: 1, paddingBottom: verticalScale(sysNavigationHeight), }}>
-								<Stack screenOptions={{ headerShown: false }}>
-									<Stack.Screen name="index" />
-									<Stack.Screen name="(modals)/profileEditModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/settingsModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/bankSetupModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/legalPoliciesModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/faqModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/referralsModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/wishlistDetailModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/wishItemDetailModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/transactionModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/contributorModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/createEditWishlistModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/createEditWishItemModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/seeMoreFeaturedWishlistsModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/boostWishlistModal" options={{ presentation: "modal" }} />
-									<Stack.Screen name="(modals)/boostDetailsModal" options={{ presentation: "modal" }} />
+			<NotificationProvider>
+				<NetworkProvider>
+					<ThemeProvider>
+						<AppProvider>
+							<AuthProvider>
+								<PaystackProvider
+									debug
+									currency="NGN"
+									defaultChannels={[
+										"bank_transfer",
+										"card",
+										"ussd",
+									]}
+									publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY!}
+								>
+									<View style={{ flex: 1, paddingBottom: verticalScale(sysNavigationHeight), }}>
+									<Stack screenOptions={{ headerShown: false }}>
+										<Stack.Screen name="index" />
+										<Stack.Screen name="(modals)/profileEditModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/settingsModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/bankSetupModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/legalPoliciesModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/faqModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/referralsModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/wishlistDetailModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/wishItemDetailModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/transactionHistoryModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/transactionDetailsModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/contributorModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/createEditWishlistModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/createEditWishItemModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/seeMoreFeaturedWishlistsModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/boostWishlistModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/boostDetailsModal" options={{ presentation: "modal" }} />
+										<Stack.Screen name="(modals)/notificationModal" options={{ presentation: "modal" }} />
 
-									<Stack.Screen name="(modals)/notificationModal" options={{ presentation: "formSheet" }} />
-									<Stack.Screen name="(modals)/withdrawalModal" options={{ presentation: "formSheet" }} />
-									<Stack.Screen name="(modals)/deleteAccountModal" options={{ presentation: "formSheet" }} />
-									<Stack.Screen name="(modals)/passwordChangeModal" options={{ presentation: "formSheet" }} />
-								</Stack>
-								</View>
-							</PaystackProvider>
-						</ThemeProvider>
-					</AuthProvider>
-				</AppProvider>
-			</NetworkProvider>
+										<Stack.Screen name="(modals)/withdrawalModal" options={{ presentation: "formSheet" }} />
+										<Stack.Screen name="(modals)/deleteAccountModal" options={{ presentation: "formSheet" }} />
+										<Stack.Screen name="(modals)/passwordChangeModal" options={{ presentation: "formSheet" }} />
+									</Stack>
+									</View>
+								</PaystackProvider>
+							</AuthProvider>
+						</AppProvider>
+					</ThemeProvider>
+				</NetworkProvider>
+			</NotificationProvider>
 		</ErrorBoundary>
 	);
 }

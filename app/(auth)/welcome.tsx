@@ -70,7 +70,7 @@ export default function WelcomeScreen() {
 
                         <View style={styles.footerExtra}>
                             <Typography size={16} fontFamily="urbanist-semibold" color={BaseColors.neutral500}>I already have a wishers account</Typography>
-                            <Pressable onPress={() => router.navigate("/(auth)/login")}>
+                            <Pressable onPress={() => router.replace("/(auth)/login")}>
                                 <Typography size={17} color={BaseColors.primaryLight} fontFamily="urbanist-semibold">Login</Typography>
                             </Pressable>
                         </View>

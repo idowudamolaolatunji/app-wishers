@@ -30,3 +30,21 @@ export const auth = initializeAuth(app, {
 
 // DB
 export const firestore = getFirestore(app);
+
+// error handling
+
+export const handleFirebaseError = (error: any) => {
+  const { code, message } = error;
+  let errorMessage = 'An unknown error occurred';
+
+  if (code === 'auth/network-request-failed') {
+    errorMessage = 'Network error. Please check your internet connection';
+  } else if (code === 'firestore/firestore-not-initialized') {
+    errorMessage = 'Firebase not connected. Please try again later';
+  } else if (message.includes('Network error')) {
+    errorMessage = 'Network error. Please check your internet connection';
+  }
+
+  // Alert.alert('Error', errorMessage);
+  return errorMessage;
+};

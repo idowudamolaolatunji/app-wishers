@@ -2,6 +2,7 @@
 // import { Firestore, Timestamp } from "firebase/firestore";
 // import { Icon } from "phosphor-react-native";
 
+import { User } from "firebase/auth";
 import React, { ReactNode } from "react";
 import {
     // ActivityIndicator,
@@ -52,12 +53,15 @@ export type AppActionType = {
     shouldPayOneTimeFee: boolean;
     wishitemCreationLimit: number;
     wishlistCreationLimit: number;
-    maxGoalAmountDigits: number;
+    maxGoalAmountDigits: number; // 10
+    maxWithdrawalAmountDigits: number; // 9
     maxGoalAmount: number;
     minGoalAmount: number;
     shouldDisplayConfetti: boolean;
     feeDiscountInPercentage: number;
     plans: BoostingPlanType[];
+    minWithdrawalAmount: number; // 100
+    appWithdrawalPercentage: number; // 8
 }
 
 export type AppTransactionType = {
@@ -163,6 +167,7 @@ export type UserType = {
     isSubscribed?: boolean;
     isActive?: boolean;
     createdAt?: boolean;
+    expoPushTokens?: string[];
 } | null;
 
 export type UserDataType = {
@@ -170,6 +175,7 @@ export type UserDataType = {
     image?: any;
     email?: string;
     isSubscribed?: boolean;
+    expoPushTokens?: string[];
 }
 
 export type AuthContextType = {
@@ -178,13 +184,13 @@ export type AuthContextType = {
     login: (
         email: string,
         password: string,
-    ) => Promise<{ success: boolean; msg?: string }>;
+    ) => Promise<{ success: boolean; msg?: string, user?: User }>;
     register: (
         name: string,
         email: string,
         password: string,
         refferedBy?: string,
-    ) => Promise<{ success: boolean; msg?: string }>;
+    ) => Promise<{ success: boolean; msg?: string, user?: User }>;
     updateUserData: (userId: string) => Promise<void>
     /////////////////////////////////////////////////
     /////////////////////////////////////////////////
@@ -242,6 +248,17 @@ export type WalletType = {
     referralEarnings: number;
     contributedEarning: number;
     created?: Date;
+}
+
+export type BankAccountType = {
+    id?: string;
+    uid?: string;
+    bankName: string;
+    accountNumber: number;
+    bankCode?: number;
+    accountName: string;
+    currency?: string;
+    createdAt?: Date;
 }
 
 export type ThemeButtonProps = {
@@ -334,4 +351,15 @@ export type WishlistCreatorType = {
     email?: string;
     name: string;
     image?: string;
+}
+
+export type NotificationType = {
+    id?: string;
+    uid: string;
+    title: string;
+    body: string;
+    read: false;
+    readAt?: string | null;
+    createdAt: string;
+    referenceToID?: string;
 }

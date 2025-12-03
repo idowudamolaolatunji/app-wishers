@@ -115,7 +115,7 @@ export default function wishItemDetailModal() {
                 >
                     {mainLoading && (
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                            <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDarker"]} />
+                            <Loading color={BaseColors[currentTheme == "light" ? "primaryLight" : "accentDark"]} />
                         </View>
                     )}
 

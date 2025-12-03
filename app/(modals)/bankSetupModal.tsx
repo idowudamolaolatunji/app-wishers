@@ -7,13 +7,16 @@ import ModalWrapper from "@/components/ModalWrapper";
 import ScreenHeader from "@/components/ScreenHeader";
 import Typography from "@/components/Typography";
 import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/useTheme";
-import { handleFetchBanks, handleResolveAccount } from "@/services/bankServices";
+import { addBankDetails, handleFetchBanks, handleResolveAccount } from "@/services/bankServices";
 import { scale, verticalScale } from "@/utils/styling";
 import * as Burnt from "burnt";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 
 export type BankType = {
@@ -25,6 +28,9 @@ export type BankType = {
 }
 
 export default function BankSetupModal() {
+	const { user } = useAuth();
+	const router = useRouter();
+
 	const { Colors, currentTheme } = useTheme();
     const [banks, setBanks] = useState<BankType[]>([]);
 	const [loading, setLoading] = useState({ main: false, tiny: false });
@@ -33,11 +39,11 @@ export default function BankSetupModal() {
 	const [bankData, setBankData] = useState<{
 		bankName: BankType | null,
 		accountNumber: string,
-		accountName: string
+		accountName: string,
 	}>({
 		bankName: null,
         accountNumber: "",
-        accountName: ""
+        accountName: "",
     });
 
 	useEffect(function() {
@@ -63,7 +69,7 @@ export default function BankSetupModal() {
                 if(!result.success) {
                     setResolveFound({ status: false, foundName: "", message: "Could not find account name" });
                 } else {
-                    const accountName = result?.data?.data?.account_name
+                    const accountName = result?.data?.data?.account_name;
                     setBankData({ ...bankData, accountName });
                     setResolveFound({ status: true, foundName: accountName, message: "" });
                 }
@@ -98,7 +104,20 @@ export default function BankSetupModal() {
 		}
 		setLoading({ ...loading, main: true });
 
+		const data = {
+			uid: user?.uid,
+			bankName: bankName?.name,
+			accountName: accountName,
+			accountNumber: +accountNumber,
+			bankCode: +bankName?.code,
+		}
+
 		try {
+			const res = await addBankDetails(data);
+			if(!res.success) throw new Error(res?.msg);
+			
+			Burnt.toast({ haptic: "success", title: "Successful" });
+			router.back();
 
 		} catch(err: any) {
 			Burnt.toast({ haptic: "error", title: err?.message });
@@ -110,9 +129,17 @@ export default function BankSetupModal() {
 	return (
 		<ModalWrapper>
 			<View style={styles.container}>
-				<ScreenHeader title="Setup Withdrawal Bank" leftElement={<BackButton />} style={{ marginBottom: spacingY._20 }} />
+				<ScreenHeader title="Add Bank Details" leftElement={<BackButton />} style={{ marginBottom: spacingY._20 }} />
 
-				<View style={styles.formItems}>
+				<KeyboardAwareScrollView
+					bounces={false}
+					overScrollMode="never" // default, always, never
+					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+					enableAutomaticScroll={true}
+					contentContainerStyle={styles.formItems}
+					enableOnAndroid
+				>
 					<View style={styles.inputContainer}>
 						<Typography fontFamily="urbanist-bold" color={Colors.textLighter}>Bank Name <Asterisk /></Typography>
 						<Dropdown
@@ -185,7 +212,7 @@ export default function BankSetupModal() {
 							onChangeText={(value) => setBankData({ ...bankData, accountName: value })}
 						/>
 					</View>
-				</View>
+				</KeyboardAwareScrollView>
 			</View>
 
 			<View style={[styles.footerArea, { borderTopColor: BaseColors[currentTheme == "dark" ? "neutral700" : "neutral400"] }]}>
