@@ -1,5 +1,4 @@
 import BackButton from "@/components/BackButton";
-import Button from "@/components/Button";
 import FormInput from "@/components/FormInput";
 import Loading from "@/components/Loading";
 import ModalWrapper from "@/components/ModalWrapper";
@@ -29,9 +28,24 @@ export default function TransactionHistoryModal() {
 	const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-	const { data: transactionData, error, loading: transactionLoading, refetch: refetchTransactions } = useFetchData<TransactionType>(
-		"transactions", user?.uid ? [where("uid", "==", user.uid), orderBy("paidAt", "desc")] : []
+	const { data, error, loading: transactionLoading, refetch: refetchTransactions } = useFetchData<TransactionType>(
+		"transactions", user?.uid ? [where("uid", "==", user?.uid), orderBy("paidAt", "desc")] : []
 	);
+
+    const filteredTransaction = data?.filter((item) => {
+        if(searchQuery?.length > 1) {
+            if(
+                item?.refId?.includes(searchQuery) || 
+                String(item?.amount)?.includes(searchQuery) || 
+                item?.type?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                item?.description?.toLowerCase()?.includes(searchQuery?.toLowerCase())
+            ) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    })
 
 	const handleRefresh = function() {
 		setRefreshing(true);
@@ -55,11 +69,13 @@ export default function TransactionHistoryModal() {
                         value={searchQuery}
                         onChangeText={(value: string) => setSearchQuery(value)}
                         containerStyle={{ flex: 1 }}
+                        isSearch={true}
+                        handleClearSearch={() => setSearchQuery("")}
                     />
 
-                    <Button style={{ paddingHorizontal: spacingX._15 }}>
+                    {/* <Button style={{ paddingHorizontal: spacingX._15 }}>
                         <Icons.SlidersHorizontalIcon color={BaseColors.white} size={verticalScale(25)} weight="bold" />
-                    </Button>
+                    </Button> */}
                 </View>
 
 				<ScrollView
@@ -75,10 +91,10 @@ export default function TransactionHistoryModal() {
                         </View>
                     )}
 
-                    {(!transactionLoading && transactionData.length > 0) && (
+                    {(!transactionLoading && filteredTransaction?.length > 0) && (
                         <View style={{ minHeight: 3 }}>
                             <FlashList
-                                data={transactionData as TransactionType[]}
+                                data={filteredTransaction as TransactionType[]}
                                 renderItem={({ item, index }) => (
                                     <TransactionItem key={index} item={item as TransactionType} index={index} handleClick={handleClickTransaction} />
                                 )}
@@ -87,7 +103,7 @@ export default function TransactionHistoryModal() {
                         </View>
                     )}
 
-                    {(!transactionLoading && transactionData.length < 1) && (
+                    {(!transactionLoading && filteredTransaction?.length < 1) && (
                         <View
                             style={{
                                 alignItems: "center",
@@ -105,7 +121,7 @@ export default function TransactionHistoryModal() {
                                 color={Colors.textLighter}
                                 style={{ textAlign: "center", marginTop: spacingY._15 }}
                             >
-                                No transactions yet!
+                                {searchQuery ? "No transactions with this query" : "No transactions yet!"}
                             </Typography>
                         </View>
                     )}

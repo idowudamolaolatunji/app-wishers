@@ -136,6 +136,8 @@ export interface InputProps extends TextInputProps {
     inputStyle?: TextStyle;
     inputRef?: React.RefObject<TextInput>
     isPassword?: boolean;
+    isSearch?: boolean;
+    handleClearSearch?: () => void;
 }
 
 export interface CustomButtonProps extends TouchableOpacityProps {
@@ -284,6 +286,7 @@ export type TransactionType = {
     type: string;
     amount: number;
     description?: string;
+    charges?: number;
     refId?: string;
     uid: string;
     wishId?: string;
@@ -304,6 +307,7 @@ export type ContributorType = {
     isAnonymous?: boolean;
     uid?: string;
     wishId?: string;
+    wishSlug?: string;
     transactionId?: string;
     refId?: string;
     // createdAt: Date | Timestamp | string;

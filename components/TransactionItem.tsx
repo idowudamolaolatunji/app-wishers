@@ -11,7 +11,7 @@ import Typography from './Typography';
 
 
 export default function TransactionItem({ item, index, handleClick }: TransactionItemProps) {
-    const { Colors } = useTheme();
+    const { Colors, currentTheme } = useTheme();
 
     return (
         <Animated.View entering={FadeInDown.delay(index * 70)}>
@@ -38,9 +38,9 @@ export default function TransactionItem({ item, index, handleClick }: Transactio
                     </Typography>
                     <Typography
                         size={14}
-                        color={Colors.textLighter}
+                        color={BaseColors[currentTheme == "dark" ? "neutral500" : "neutral400"]}
                         textProps={{ numberOfLines: 2 }}
-                        fontFamily="urbanist-medium"
+                        fontFamily="urbanist-semibold"
                     >
                         #{item.refId}
                     </Typography>
@@ -48,7 +48,7 @@ export default function TransactionItem({ item, index, handleClick }: Transactio
 
                 <View style={styles.amountDetails}>
                     <Typography size={18} fontFamily="urbanist-bold" color={BaseColors[item?.type == "Withdrawal" ? "brown" : "primaryLight"]}>{formatCurrency(item.amount ?? 0, 0)}</Typography>
-                    <Typography size={12.5} fontFamily="urbanist-medium" color={Colors.textLighter}>{formatDate(item?.paidAt)}</Typography>
+                    <Typography size={12.5} fontFamily="urbanist-medium" color={Colors.neutral500}>{formatDate(item?.paidAt)}</Typography>
                 </View>
             </TouchableOpacity>
         </Animated.View>

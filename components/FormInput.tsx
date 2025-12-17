@@ -38,6 +38,15 @@ export default function FormInput(props: InputProps) {
                     )}
                 </TouchableOpacity>
             )}
+
+            {(props.isSearch && props.value) && (
+                <TouchableOpacity
+                    onPress={() => props.handleClearSearch && props.handleClearSearch()}
+                    style={{ padding: 5, paddingRight: 0 }}
+                >
+                    <Icons.XIcon size={verticalScale(24)} weight="bold" color={BaseColors.rose} />
+                </TouchableOpacity>
+            )}
         </View>
     )
 }

@@ -40,6 +40,12 @@ export function calculatePercentage(current: number, target: number): number {
 	return percentage >= 100 ? 100 : Number(percentage.toFixed(percentage % 1 === 0 ? 0 : 1));
 }
 
+export function formatDateFull(dateString: string): string {
+	const date = moment(dateString);
+    return date.format('DD, MMM YYYY [at] hh:mm:ss a');
+}
+
+
 export function formatDate(dateString: string): string {
 	const momentDate = moment(dateString);
 	const now = moment();
