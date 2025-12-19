@@ -239,6 +239,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
         login,
         register,
         updateUserData,
+        StoreAuth,
         ///////////////////
         ///////////////////
         getStoredUserData,

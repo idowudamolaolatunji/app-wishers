@@ -198,6 +198,7 @@ export type AuthContextType = {
     updateUserData: (userId: string) => Promise<void>
     /////////////////////////////////////////////////
     /////////////////////////////////////////////////
+    StoreAuth: (email: string, password: string, name?: string) => Promise<void>
     getStoredUserData: () => Promise<{ email: string; name: string }>
     enableBiometric: () => Promise<boolean>;
     disableBiometric: () => Promise<void>;

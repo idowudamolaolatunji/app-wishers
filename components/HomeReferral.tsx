@@ -34,7 +34,7 @@ export default function HomeReferral({ handleClose, referralEarnings }: { handle
                         // color={BaseColors.neutral600}
                         color={BaseColors.purple}
                         fontFamily="urbanist-semibold"
-                        size={verticalScale(19)}
+                        size={verticalScale(18.5)}
                     >
                         Get 1% of your friend's earnings
                     </Typography>
@@ -42,7 +42,7 @@ export default function HomeReferral({ handleClose, referralEarnings }: { handle
                         // color={BaseColors.neutral600}
                         color={BaseColors.purple}
                         fontFamily="urbanist-semibold"
-                        size={verticalScale(19)}
+                        size={verticalScale(18.5)}
                     >
                         when they use your referral code
                     </Typography>
@@ -58,10 +58,8 @@ export default function HomeReferral({ handleClose, referralEarnings }: { handle
                 </View>
 
                 <Image
-                    // source={require("@/assets/images/icon-confetti.png")}
-                    // style={{ height: 85 }}
                     source={require("@/assets/images/icon-gift.png")}
-                    style={{ height: 80 }}
+                    style={{ height: 78 }}
                     resizeMode="contain"
                 />
             </View>
@@ -71,14 +69,14 @@ export default function HomeReferral({ handleClose, referralEarnings }: { handle
 
 const styles = StyleSheet.create({
 	container: {
-		height: scale(100),
+		minHeight: scale(100),
 		width: "100%",
         // backgroundColor: "#fff5faff",
         backgroundColor: BaseColors.purpleAccent,
         borderRadius: radius._10,
         borderWidth: 1,
         borderColor: BaseColors.neutral200,
-        position: "relative",        
+        position: "relative",
 	},
     closeIcon: {
         position: "absolute",

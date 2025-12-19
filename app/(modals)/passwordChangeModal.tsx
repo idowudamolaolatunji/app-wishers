@@ -3,6 +3,7 @@ import BackButton from "@/components/BackButton";
 import ModalWrapper from "@/components/ModalWrapper";
 import { auth } from "@/config/firebase";
 import { BaseColors, spacingX, spacingY } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/useTheme";
 import { scale, verticalScale } from "@/utils/styling";
 import * as Burnt from "burnt";
@@ -20,6 +21,7 @@ import Typography from "../../components/Typography";
 
 export default function PasswordChange() {
     const router = useRouter();
+    const { StoreAuth } = useAuth();
     const { Colors, currentTheme } = useTheme();
     const [passwordData, setPasswordData] = useState({ password: "", newPassword: "" });
     const [loading, setLoading] = useState(false);
@@ -41,6 +43,7 @@ export default function PasswordChange() {
 
             // STEP 2: Update password
             await updatePassword(user!, newPassword);
+            StoreAuth(user?.email!, password);
 
             Burnt.toast({ haptic: "success", title: "Password changed successfully!" });
             router.back();

@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     },
     avatar: {
         alignSelf: "center",
-        height: verticalScale(135),
-        width: verticalScale(135),
+        height: verticalScale(130),
+        width: verticalScale(130),
         borderRadius: 200,
         // borderWidth: 1,
         // borderColor: BaseColors.neutral600,
