@@ -28,7 +28,6 @@ export const createOrUpdateWishlist = async function (wishlistData: Partial<Wish
             wishlistToSave.isCompleted = false;
             wishlistToSave.active = true;
             wishlistToSave.slug = `${slug}`;
-            // wishlistToSave.link = `https://pay.wishers.app/w/${slug}`;
             wishlistToSave.link = `https://pay.wishers.app/w/${slug}`;
             wishlistToSave.wishes = [];
             wishlistToSave.created = new Date();
@@ -94,6 +93,7 @@ export const createOrUpdateWishItem = async function (wishData: Partial<WishItem
                 wishes: arrayUnion({
                     image: wishToSave?.images?.[0],
                     title: wishToSave.title,
+                    description: wishToSave.description,
                     slug: wishToSave.slug,
                     goalAmount: wishToSave.goalAmount,
                     amountReceived: 0,

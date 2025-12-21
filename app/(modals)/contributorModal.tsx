@@ -47,7 +47,7 @@ export default function ContributorModal() {
 	return (
 		<ModalWrapper>
 			<View style={styles.container}>
-				<ScreenHeader title="Contribution Details" leftElement={<BackButton />} style={{ marginBottom: spacingY._10 }} />
+				<ScreenHeader title="Giver's Contribution" leftElement={<BackButton />} style={{ marginBottom: spacingY._10 }} />
 
 				<ScrollView
 					bounces={false}

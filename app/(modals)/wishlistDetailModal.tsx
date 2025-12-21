@@ -71,7 +71,7 @@ export default function wishlistDetailModal() {
         try {
             await Share.share({
                 // message: `Check my Wishlist: \n\n${wishlist?.title} \n\n${wishlist.link}`,
-                message: `help me acheive my ${wishlist?.title} \n\n${wishlist.link}`,
+                message: `Check my Wishlist, and help me acheive it:\n${wishlist?.title}\n${wishlist.link}`,
                 url: `${wishlist.link}`, // iOS only
                 title: 'Share Wishlist', // Android only
             });

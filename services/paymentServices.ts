@@ -1,6 +1,6 @@
 import { firestore } from "@/config/firebase";
 import { generateSlug } from "@/utils/helpers";
-import { AppTransactionType, BankAccountType, ResponseType, UserType } from "@/utils/types";
+import { AppTransactionType, BankAccountType, ResponseType, UserType, WithdrawalChargesType } from "@/utils/types";
 import { collection, doc, increment, setDoc, updateDoc } from "firebase/firestore";
 
 export const processOneTimePayment = async function(reference: string, uid: string, amount: number): Promise<ResponseType> {
@@ -86,10 +86,7 @@ export const processWishlistBoosting = async function(reference: string, creator
 }
 
 
-export const processWithdrawalTransaction = async function(amount: number, bankAccount: BankAccountType, reason: string ): Promise<ResponseType> {
-    console.log("I was clicked!!");
-
-
+export const processWithdrawalTransaction = async function(uid: string, amount: number, bankAccount: BankAccountType, charges: WithdrawalChargesType, reason?: string ): Promise<ResponseType> {
     const recipientData = {
         type: 'nuban',
         name: bankAccount?.accountName,
@@ -98,25 +95,30 @@ export const processWithdrawalTransaction = async function(amount: number, bankA
         currency: bankAccount?.currency || "NGN",
     };
 
+    // THREE STEPS TO MAKING A TRANSFER (WITHDRAWAL)
+    // 1. CREATE A RECEPIENT CODE
+    // 2. INITIALIZE PAYMENT
+
     try {
         const recepient_res = await fetch(`https://api.paystack.co/transferrecipient`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${process.env.EXPO_PUBLIC_PAYSTACK_SECRET_KEY}`,
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_WISHLIST_PAYSTACK_SECRET_KEY}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(recipientData),
-        })
+        });
 
         const recepient_data = await recepient_res.json();
         const recipientCode = recepient_data?.data?.recipient_code;
-        // console.log(recepient_data, recipientCode);
+        // console.log(recipientCode);
+
 
         const init_res = await fetch(`https://api.paystack.co/transfer`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.EXPO_PUBLIC_PAYSTACK_SECRET_KEY}`,
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_WISHLIST_PAYSTACK_SECRET_KEY}`,
             },
             body: JSON.stringify({
                 source: "balance",
@@ -129,18 +131,37 @@ export const processWithdrawalTransaction = async function(amount: number, bankA
 
         const init_data = await init_res.json();
         const reference = init_data?.data?.refeence;
-        console.log(init_data, reference)
+        console.log(init_data, reference);
 
+        if(!init_data?.status && init_data?.code == "insufficient_balance") {
+            return { success: false, msg: "Something went wrong with the withdrawal, Contact the admin",  }
+        }
 
         const status_res = await fetch(`https://api.paystack.co/transfer/${reference}`, {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${process.env.EXPO_PUBLIC_PAYSTACK_SECRET_KEY}`,
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_WISHLIST_PAYSTACK_SECRET_KEY}`,
                 'Content-Type': 'application/json',
             },
         });
         const status_data = await status_res.json();
         console.log(status_data)
+
+        const app_transaction = {
+            email: status_data?.customer?.email,
+            amount: amount,
+            charges: charges?.paystack,
+            paidAmount: charges?.profit,
+            status: "status",
+            type: "app-percent",
+            currency: status_data?.currency,
+            uid, refId: reference,
+            paidAt: status_data.paidAt,
+        } as AppTransactionType;
+
+        const appPaymentRef = doc(collection(firestore, "app_transactions"));
+        await setDoc(appPaymentRef, app_transaction, { merge: true });
+
 
         return { success: true }
     } catch(err: any) {

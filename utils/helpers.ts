@@ -104,3 +104,11 @@ export const calculateTimeLeft = (targetTime: any) => {
 		seconds: seconds.toString().padStart(2, '0'),
 	};
 };
+
+
+export const paystackTransferFee = function(amount: number) {
+	if (!amount) return 0
+	if (amount <= 5000) return 10;
+	if (amount <= 50000) return 25;
+	return 50;
+}

@@ -1,9 +1,11 @@
+import Button from "@/components/Button";
 import ScreenHeader from "@/components/ScreenHeader";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Typography from "@/components/Typography";
 import { auth } from "@/config/firebase";
 import { BaseColors, radius, spacingX } from '@/constants/theme';
 import { useAuth } from "@/contexts/AuthContext";
+import useDraggable from "@/hooks/useDraggable";
 import { useTheme } from "@/hooks/useTheme";
 import { getProfileImage } from "@/services/imageService";
 import { verticalScale } from "@/utils/styling";
@@ -12,16 +14,19 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { signOut } from "firebase/auth";
 import * as Icons from "phosphor-react-native";
-import React from "react";
-import { Alert, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import React, { useState } from "react";
+import { Alert, Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import ReAnimated, { FadeInDown } from "react-native-reanimated";
 import { spacingY } from '../../constants/theme';
 
 
 export default function ProfileScreen() {
     const { user } = useAuth();
-    const { Colors } = useTheme();
+    const { Colors, currentTheme } = useTheme();
     const router = useRouter();
+
+    const { pan, panResponder, showModal: showLogoutModal, setShowModal: setShowLogoutModal } = useDraggable();
+    const [loggingOut, setLoggingOut] = useState(false);
 
     const accountOptions: AccountOptionType[] = [
         {
@@ -130,7 +135,9 @@ export default function ProfileScreen() {
     ];
 
     const handleLogout = async function() {
+        setLoggingOut(true)
 		await signOut(auth);
+        setLoggingOut(false)
 	}
 
     const showLogoutAlert = function() {
@@ -148,7 +155,8 @@ export default function ProfileScreen() {
     }
 
     const handlePress = async function(item: AccountOptionType) {
-        if(item.title == "Logout") showLogoutAlert();
+        // if(item.title == "Logout") showLogoutAlert();
+        if(item.title == "Logout") setShowLogoutModal(true);
 
         if(item.routeName) {
             router.push(item?.routeName);
@@ -190,7 +198,7 @@ export default function ProfileScreen() {
                     {/* account options */}
                     <View style={styles.accountOptions}>
                         {accountOptions?.map((item, index) => (
-                            <Animated.View key={index} style={styles.listItem}
+                            <ReAnimated.View key={index} style={styles.listItem}
                                 entering={FadeInDown.delay(index * 50)}>
                                 <TouchableOpacity style={styles.flexRow} activeOpacity={0.8} onPress={() => handlePress(item)}>
                                     <View style={[styles.listIcon, { backgroundColor: item.bgColor }]}>
@@ -217,7 +225,7 @@ export default function ProfileScreen() {
                                         weight="bold" color={Colors.text}
                                     />
                                 </TouchableOpacity>
-                            </Animated.View>
+                            </ReAnimated.View>
                         ))}
                     </View>
 
@@ -236,6 +244,45 @@ export default function ProfileScreen() {
                         <Typography size={16} color={BaseColors.neutral400} fontFamily="urbanist-medium">Version 1.0.0</Typography>
                     </View>
                 </ScrollView>
+
+
+                {/* Logout Modal */}
+                <Modal
+                    visible={showLogoutModal}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => setShowLogoutModal(false)}
+                >
+                    <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
+                        <Pressable onPress={() => setShowLogoutModal(false)} style={{ flex: 1 }} />
+                        
+                        <Animated.View
+                            {...panResponder.panHandlers}
+                            style={[
+                                { padding: spacingY._17, paddingBottom: spacingY._20, backgroundColor: Colors[currentTheme == "dark" ? "background300" : "background200"], borderTopRightRadius: verticalScale(30), borderTopLeftRadius: verticalScale(30) },
+                                pan.getLayout(),
+                            ]}
+                        >
+                            <Typography color={BaseColors.rose} size={verticalScale(30)} fontFamily="urbanist-bold" style={{ textAlign: "center", marginTop: spacingY._3 }}>
+                                Logout
+                            </Typography>
+                            <View style={{ height: 1, backgroundColor: BaseColors[currentTheme == "dark" ? "neutral500" : "neutral300"], marginTop: spacingY._10, marginBottom: spacingY._20 }} />
+                            <Typography color={Colors.text} fontFamily="urbanist-semibold" style={{ marginBottom: spacingY._25, textAlign: "center" }}>
+                                Are you sure you want to log out?
+                            </Typography>
+
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Button onPress={() => setShowLogoutModal(false)} disabled={loggingOut} style={{ width: "48%", backgroundColor: BaseColors[currentTheme == "dark" ? "accentLight" : "primaryLight"] }}>
+                                    <Typography size={21} color={BaseColors[currentTheme == "dark" ? "primaryLight" : "white"]} fontFamily="urbanist-extrabold">Cancel</Typography>
+                                </Button>
+
+                                <Button onPress={handleLogout} disabled={loggingOut} style={{ width: "48%", backgroundColor: BaseColors.brownAccent }}>
+                                    <Typography size={21} color={BaseColors.rose} fontFamily="urbanist-extrabold">Yes, Logout</Typography>
+                                </Button>
+                            </View>
+                        </Animated.View>
+                    </View>
+                </Modal>
             </View>
 		</ScreenWrapper>
 	);

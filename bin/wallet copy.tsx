@@ -1,6 +1,6 @@
+import { TransactionItem } from "@/bin/TransactionList";
 import Loading from "@/components/Loading";
 import ScreenWrapper from "@/components/ScreenWrapper";
-import { TransactionItem } from "@/components/TransactionList";
 import Typography from "@/components/Typography";
 import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";

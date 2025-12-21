@@ -1,6 +1,5 @@
 import Accordion from '@/components/Accordion'
 import BackButton from '@/components/BackButton'
-import FormInput from '@/components/FormInput'
 import ModalWrapper from '@/components/ModalWrapper'
 import ScreenHeader from '@/components/ScreenHeader'
 import Typography from '@/components/Typography'
@@ -19,11 +18,16 @@ export default function FrequentlyAskedModal() {
     const { Colors, currentTheme } = useTheme();
     const appWhatsappNumber = "2349057643470"
 
-    const [searchQuery, setSearchQuery] = useState("")
+    // const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("faq");
 
     const faqs = [
-        { title: "title for first accordion", content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores, perferendis." }
+        {
+            id: "1",
+            title: "title for first accordion",
+            // content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores, perferendis."
+            content: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Debitis nihil accusamus consequatur commodi possimus asperiores fugiat at, maxime, praesentium distinctio neque incidunt recusandae, dolore velit dolorum cupiditate ratione repellendus non magni fugit totam sit! Dolor consequatur non recusandae. Possimus, deserunt atque! Voluptates, beatae. Temporibus corrupti atque sequi distinctio, delectus dolorum esse. Illo autem tempora deserunt repellat tenetur? Quasi itaque quis deleniti?"
+        }
     ];
 
     const openWhatsAppChat = async () => {
@@ -53,16 +57,16 @@ export default function FrequentlyAskedModal() {
 
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {activeTab == "faq" && (
-                        <View style={{ marginTop: spacingY._5 }}>
-                            <FormInput
+                        <View style={{ marginTop: spacingY._5, gap: spacingY._20 }}>
+                            {/* <FormInput
                                 placeholder="Search"
                                 icon={<Icons.MagnifyingGlassIcon size={verticalScale(24)} color={BaseColors.primaryLight} weight="bold" />}
                                 value={searchQuery}
                                 onChangeText={(value: string) => setSearchQuery(value)}
                                 containerStyle={{ flex: 1, borderWidth: 0, borderBottomWidth: 1 }}
-                            />
+                            /> */}
 
-                            <View style={{ marginTop: spacingY._20 }}>
+                            <View style={{}}>
                                 {faqs?.map((value, index) => (
                                     <Accordion data={value} index={index} key={index} />
                                 ))}
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacingY._20,
     },
     tabs: {
-        width: "80%",
+        width: "100%",
         flexDirection: "row",
         alignSelf: "center",
         alignItems: "center",

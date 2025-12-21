@@ -8,6 +8,7 @@ import Subscribe from "@/components/Subscribe";
 import SubscribeCompleted from "@/components/SubscribeCompleted";
 import Typography from "@/components/Typography";
 import WishInsight from "@/components/WishInsight";
+import WishlistCard from "@/components/WishlistCard";
 import { BaseColors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAppContext } from "@/contexts/AppContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -179,7 +180,7 @@ export default function WishlistScreen() {
                         <FlashList
                             data={data}
                             renderItem={({ item, index }: { item: WishlistType; index: number; }) => (
-                                <WishListItem
+                                <WishlistCard
                                     key={index}
                                     item={item}
                                     index={index}

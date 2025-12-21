@@ -1,7 +1,7 @@
 import { BaseColors, radius, spacingX, spacingY } from '@/constants/theme'
 import { useTheme } from '@/hooks/useTheme'
 import { getFilePath, getProfileImage } from '@/services/imageService'
-import { calculatePercentage, formatCurrency, formatShortCurrency } from '@/utils/helpers'
+import { calculatePercentage, formatCurrency, formatNumber, formatShortCurrency } from '@/utils/helpers'
 import { verticalScale } from '@/utils/styling'
 import { FeaturedWishlistProps, WishlistType } from '@/utils/types'
 import { Image, ImageBackground } from 'expo-image'
@@ -9,7 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import * as Icons from "phosphor-react-native"
 import React from 'react'
-import { Dimensions, FlatList, Pressable, StyleSheet, View } from 'react-native'
+import { Dimensions, FlatList, Linking, Pressable, StyleSheet, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import Loading from './Loading'
 import Rangebar from './Rangebar'
@@ -63,7 +63,7 @@ export default function FeaturedWishlists({ data, loading }: FeaturedWishlistPro
                                         backgroundColor: Colors.background200,
                                         width: verticalScale(width - (data?.length > 1 ? 60 : 38)),
                                     }]}
-                                    onPress={() => router.push(`https://pay.wishers.app/w/${item?.slug}`)}
+                                    onPress={() => Linking.openURL(item?.link!)}
                                 >
                                     <ImageBackground
                                         source={getFilePath(item?.image)}
@@ -96,13 +96,19 @@ export default function FeaturedWishlists({ data, loading }: FeaturedWishlistPro
                                                                 ))}
                                                             </View>
                                                         ) : (
-                                                            <Icons.UsersThreeIcon size={21} color={BaseColors.neutral350} />
+                                                            <React.Fragment>
+                                                                {item?.totalContributors ? (
+                                                                    <Image source={getProfileImage(null)} style={[styles.contributorImage, { backgroundColor: BaseColors.neutral300, borderColor: BaseColors.white,  }]} contentFit="cover" />
+                                                                ) : (
+                                                                    <Icons.UsersThreeIcon size={21} color={Colors.textLighter} />
+                                                                )}
+                                                            </React.Fragment>
                                                         )}
-                                                        <Typography fontFamily="urbanist-medium" size={verticalScale(17)} color={BaseColors.neutral350}>{item.totalContributors} Giver{item?.totalContributors === 1 ? "" : "s"}</Typography>
+                                                        <Typography fontFamily="urbanist-medium" size={verticalScale(17)} color={BaseColors.neutral350}>{formatNumber(item?.totalContributors || 0) || "No"} Giver{item?.totalContributors === 1 ? "" : "s"} {item?.totalContributors == 0 ? "Yet!" : ""}</Typography>
                                                     </View>
                                                     <View style={{ flexDirection: "row", gap: 3 }}>
                                                         <Icons.GiftIcon size={21} color={BaseColors.neutral350} />
-                                                        <Typography fontFamily="urbanist-medium" size={verticalScale(17)} color={BaseColors.neutral350}>{item.totalWishItems} Wish{item?.totalWishItems === 1 ? "" : "es"}</Typography>
+                                                        <Typography fontFamily="urbanist-medium" size={verticalScale(17)} color={BaseColors.neutral350}>{item?.totalWishItems} Wish{item?.totalWishItems === 1 ? "" : "es"}</Typography>
                                                     </View>
                                                 </View>
                             

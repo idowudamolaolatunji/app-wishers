@@ -8,8 +8,8 @@ import { useRouter } from 'expo-router'
 import * as Icons from "phosphor-react-native"
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import Loading from './Loading'
-import Typography from './Typography'
+import Loading from '../components/Loading'
+import Typography from '../components/Typography'
 
 
 export default function TransactionList({ data, title, loading }: TransactionListType) {

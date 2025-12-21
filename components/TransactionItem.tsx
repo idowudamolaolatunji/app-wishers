@@ -6,7 +6,7 @@ import { TransactionItemProps } from '@/utils/types';
 import * as Icons from "phosphor-react-native";
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import Typography from './Typography';
 
 
@@ -14,7 +14,7 @@ export default function TransactionItem({ item, index, handleClick }: Transactio
     const { Colors, currentTheme } = useTheme();
 
     return (
-        <Animated.View entering={FadeInDown.delay(index * 70)}>
+        <Animated.View>
             <TouchableOpacity
                 style={[styles.row, { backgroundColor: Colors.cardBackground, marginTop: index == 0 ? spacingY._20 : 0 }]}
                 activeOpacity={1}

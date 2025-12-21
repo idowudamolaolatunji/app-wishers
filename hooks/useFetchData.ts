@@ -24,7 +24,6 @@ export default function useFetchData<T>(collectionName: string, constrains: Quer
 					};
 				}) as T[];
 				setData(fetchedData);
-				// setLoading(false);
 
 				// temp
 				if(refetchTrigger) {

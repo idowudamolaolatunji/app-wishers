@@ -75,7 +75,7 @@ export type AppTransactionType = {
     uid?: string;
     refId?: string;
     paidAt?: Date,
-    type: "boosting" | "one-time"
+    type: "boosting" | "one-time" | "app-percent"
 }
 
 export type AppContextType = {
@@ -383,4 +383,10 @@ export type NotificationType = {
     readAt?: string | null;
     createdAt: string;
     referenceToID?: string;
+}
+
+export type WithdrawalChargesType = {
+    profit: number;
+    totalDeduction: number;
+    paystack: number;
 }

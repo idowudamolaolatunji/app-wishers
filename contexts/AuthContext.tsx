@@ -54,11 +54,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode}> = function({ c
                 (async function() {
                     const data = await getStoredUserData();
 
-                    if(data?.email) {
-                        router.replace("/(auth)/login")
-                    } else {
-                        router.replace("/(auth)/welcome")
-                    }
+                    // if(data?.email) {
+                    //     router.replace("/(auth)/login")
+                    // } else {
+                    //     router.replace("/(auth)/welcome")
+                    // }
+                    router.replace("/(auth)/welcome")
                 })();
             }
         }, handleFirebaseError);

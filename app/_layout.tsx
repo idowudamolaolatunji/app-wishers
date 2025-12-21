@@ -14,8 +14,8 @@ import ErrorFallback from "./error";
 
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { verticalScale } from "@/utils/styling";
-import { Platform } from "react-native";
-import { useNavigationMode } from 'react-native-navigation-mode';
+// import { Platform } from "react-native";
+// import { useNavigationMode } from 'react-native-navigation-mode';
 
 import * as Notifications from 'expo-notifications';
 
@@ -34,7 +34,7 @@ Notifications.setNotificationHandler({
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-	const { navigationMode } = useNavigationMode();
+	// const { navigationMode } = useNavigationMode();
 	const [sysNavigationHeight, setSysNavigationBarHeight] = useState(0)
 
 	const [loaded] = useFonts({
@@ -53,11 +53,11 @@ export default function RootLayout() {
 		}
 	}, [loaded]);
 
-	useEffect(function() {
-		if(Platform.OS == "android" && navigationMode?.isGestureNavigation == false) {
-			setSysNavigationBarHeight(navigationMode.navigationBarHeight || 0);
-		}
-	}, [navigationMode?.isGestureNavigation]);
+	// useEffect(function() {
+	// 	if(Platform.OS == "android" && navigationMode?.isGestureNavigation == false) {
+	// 		setSysNavigationBarHeight(navigationMode.navigationBarHeight || 0);
+	// 	}
+	// }, [navigationMode?.isGestureNavigation]);
 
 	if (!loaded) {
 		return null; // render nothing while fonts are loading

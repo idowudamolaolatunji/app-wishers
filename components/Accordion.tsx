@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         padding: spacingY._20,
-        paddingVertical: spacingY._15,
     },
     iconContainer: {
         width: verticalScale(24),
